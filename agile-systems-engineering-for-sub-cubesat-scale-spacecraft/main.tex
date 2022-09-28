@@ -1,0 +1,876 @@
+\documentclass[]{iac}
+% To make the list of abbreviations and symbols. 
+\usepackage[acronym]{glossaries}
+\usepackage{hyperref}
+\usepackage[citestyle=numeric,bibstyle=numeric,maxbibnames=1,maxcitenames=1,sorting=none,sortcites]{biblatex}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[inline]{enumitem}
+\usepackage{siunitx}
+\usepackage[nameinlink]{cleveref}
+\usepackage{tabularx}
+\usepackage{acro}
+\usepackage[british]{babel}
+\usepackage{xcolor-material}
+\usepackage{soul}
+%\usepackage{microtype}  %TODO!!!
+
+\makeglossaries
+\include{abbreviations}
+
+\sisetup{range-units = single,print-unity-mantissa=false}
+
+\setlength{\marginparwidth}{2cm}
+%\usepackage[colorinlistoftodos,disable,textsize=small]{todonotes}
+%\setuptodonotes{inline,inlinepar,inlinewidth=5cm}
+
+\usepackage[many]{tcolorbox}
+\newtcbox{\todo}{
+    on line,
+    colback=red!5!white,
+    colframe=red!75!black,
+    coltitle=red!75!black,
+    fonttitle=\bfseries,
+    fontupper=\footnotesize,
+    title=TODO,
+    detach title,
+    before upper={\tcbtitle\ },
+    nobeforeafter,
+    tcbox raise base,
+    top=0pt,bottom=0pt,left=0mm,right=0mm,
+    toprule=0mm,
+    bottomrule=0mm,boxsep=0.7mm,
+}
+
+\def\todo#1{}
+
+% Print DOI and NOT URL
+\DeclareSourcemap{
+  \maps[datatype=bibtex]{
+    \map[overwrite]{
+      \step[fieldsource=doi, final]
+      \step[fieldset=url, null]
+      \step[fieldset=eprint, null]
+    }  
+  }
+}
+
+
+
+% Hide some URLs and put them in the title
+\ExecuteBibliographyOptions{url=false}
+\newbibmacro{string+url}[1]{%
+    \iffieldundef{url}{#1}{\href{\thefield{url}}{#1}}
+}
+\DeclareFieldFormat{title}{\usebibmacro{string+url}{\mkbibemph{#1}}}
+\DeclareFieldFormat[article]{title}{\usebibmacro{string+url}{\mkbibquote{#1}}}
+\DeclareFieldFormat[inproceedings]{title}{\usebibmacro{string+url}{\mkbibquote{#1}}}
+\DeclareFieldFormat[thesis]{title}{\usebibmacro{string+url}{\mkbibquote{#1}}}
+
+\newcommand\myshade{85}
+\colorlet{mylinkcolor}{violet}
+\colorlet{mycitecolor}{Turquoise}
+\colorlet{myurlcolor}{Blue}
+
+\hypersetup{
+  linkcolor  = mylinkcolor!\myshade!black,
+  citecolor  = mycitecolor!\myshade!black,
+  urlcolor   = myurlcolor!\myshade!black,
+  colorlinks = true,
+}
+
+\DeclareMathOperator{\E}{E}
+\DeclareMathOperator{\prob}{p}
+\DeclareMathOperator{\tr}{tr}
+
+\newcommand{\etalia}{\textit{et al.}}
+\newcommand*{\vectornorm}[1]{\left\|#1\right\|}
+\newcommand*\rfrac[2]{{{}^{#1}\!/_{#2}}} % running fraction with slash - requires math mode.
+\newcommand*\T{\mathsf{T}}
+
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+\addbibresource{references.bib}
+
+\setlist{leftmargin=0.8cm}
+
+\begin{document}
+
+\lhead{}
+\chead{\footnotesize 73\textsuperscript{rd} International Astronautical Congress (IAC), Paris, France, 18-22 September 2022.\\ Copyright \copyright 2022 by Mr. Konstantinos Kanavouras. Published by the IAF, with permission and released to the IAF to publish in all forms.}
+\rhead{}
+
+\makeatletter
+\lfoot{IAC--\iac@paperyear--\iac@papernumber}\cfoot{}\rfoot{Page \thepage\ of \pageref{LastPage}}%
+\makeatother
+
+\IACpaperyear{22}
+\IACpapernumber{D1,IPB,15,x71812}
+\IACconference{73}
+\IAClocation{Paris, France, 18-22 September 2022}
+\IACcopyrightB{2022}{International Astronautical Federation (IAF)}
+
+\title{Agile-Systems Engineering for sub-CubeSat scale spacecraft}
+
+\IACauthor{Konstantinos~Kanavouras}{University of Luxembourg, \url{konstantinos.kanavouras@uni.lu}}
+\IACauthor{Andreas~M.~Hein}{University of Luxembourg, \url{andreas.hein@uni.lu}}
+\IACauthor{Maanasa~Sachidanand}{ISAE-SUPAERO, France, \url{maanasa.sachidanand@student.isae-supaero.fr}}
+
+\abstract{Space systems miniaturization has been increasingly popular for the past decades, with over 1600
+CubeSats and 300 sub-CubeSat sized spacecraft estimated to have been launched since 1998. This trend
+towards decreasing size enables the execution of unprecedented missions in terms of quantity, cost and
+development time, allowing for massively distributed satellite networks, and rapid prototyping of space
+equipment. Pocket-sized spacecraft can be designed in-house in less than a year and can reach weights
+of less than 10g, taking away the considerable costs and requirements typically associated with orbital
+flight. However, while Systems Engineering methodologies have been proposed for missions down to
+CubeSat size, there is still a gap regarding design approaches for picosatellites and smaller spacecraft,
+which can exploit their potential for iterative and accelerated development. In this paper, we propose a
+Systems Engineering methodology that abstains from the classic waterfall-like approach in favor of agile
+practices, focusing on available capabilities, delivery of features and design ``sprints''. % Shifting away from the typical system-subsystem-component model, this methodology
+%originates from the software engineering discipline, suggesting instead to specify desired capabilities which are directly linked to one or
+%more components.
+Shifting away from the typical design-verify-operate model, this method originates from the software engineering discipline, focusing more on short design iterations, team collaboration, and focusing on quickly delivering a minimum viable product.
+This allows quick adaptation to imposed
+constraints, changes to requirements and unexpected events (e.g.~chip shortages or delays), by making
+the design flexible to well-defined modifications. Two femtosatellite missions, currently under development
+and due to be launched in 2023, are used as case studies for our approach, showing how miniature
+spacecraft can be designed, developed and qualified from scratch in 6 months or less. Both missions
+involve the attachment of a chip-sized satellite (“ChipSat”) into a larger spacecraft, either relying on
+their host for communications and power or being completely independent.
+We claim that the proposed method can simultaneously increase confidence in the design and decrease turnaround time for extremely small satellites, allowing novel and unprecedented missions to take shape without the overhead traditionally associated with sending cutting-edge hardware to space.%plan-driven processes.
+%The proposed methodology
+%has applications in Earth orbits and beyond, bringing well-established design practices into the domain of
+%aerospace engineering and providing a well-structured approach to the creation of small-sized spacecraft,
+%which benefits from quick integration of past lessons learned with new technologies.
+}
+\IACkeywords{systems engineering}{femtosatellites}{attosatellites}{chipsat}{agile}{scrum}
+
+\maketitle
+% Add list of symbols 
+%\printglossary[type=\acronymtype, title=Abbreviations]
+%\printglossary[title=Nomenclature]
+
+\acuseall
+\printacronyms[template=supertabular]
+
+
+%\newpage
+%\hspace{0pt}
+
+%\pagebreak[4]
+%\newpage
+
+
+\section{Introduction}
+    %\subsection{Sub-CubeSat Spacecraft Types}
+
+    % https://airtable.com/shrafcwXODMMKeRgU/tbldJoOBP5wlNOJQY
+    % Total launched (incl failures): 2065
+    % Total CubeSats (incl failures): 1894
+    % PocketQube launched: 52
+    % NanoSat (non-CS): 68
+    % PicoSat: 26
+    % FemtoSat: 4
+    % ThinSat: 21
+    % LAUNCH FAILURES: 108
+    CubeSats are a class of spacecraft categorised as \emph{nano-satellites} \autocite{kulu_nanosats_2021}, which typically weigh less than \SI{10}{\kilo\gram} and considerably reduce the effort required to reach orbit.
+    Since the publication of the CubeSat standard \cite{CDS14}, more than 1600 CubeSats have been launched into orbit \autocite{kulu_nanosats_2021}.
+
+    
+
+    % What is a cubesat
+    %CubeSats are in orbit
+    % While CubeSats are considered of low relative cost and effort in the space industry, they still require significant investment from builders, especially universities with no prior experience in space development. 
+ 
+    %A typical cost of more than \SI{100000}{\$} even for simple developments
+    
+    While CubeSat trends already had a momentous impact in space engineering and are considered of low relative cost and effort in the space industry \autocite{poghosyan_cubesat_2017, sweeting_modern_2018}, they still require significant investment from designers and builders. Newcomers in the CubeSat world, such as educational institutions or start-ups, are usually faced with a build and launch cost of more than \SI{200000}{\$}, and at least some years of development (\Cref{tab:compi}). The effort increases further if multiple CubeSat launches are desired.
+
+
+   \begin{table*}[]
+    \centering
+    \caption{Comparison between classes of nano-satellites and smaller \autocite{hein_attosats_2019, PQ1, speretta_cubesats_2016, saeed_cubesat_2020}}
+    \label{tab:compi}
+    \begin{tabular}{@{}llll@{}}
+    \toprule
+     & CubeSats & PocketQubes & ChipSats \\ \midrule
+     & \multicolumn{1}{c}{\includegraphics[height=1.5cm]{media/acubesat_small.png}} & \multicolumn{1}{c}{\includegraphics[height=1.5cm]{media/pocketqube.png}} & \multicolumn{1}{c}{\includegraphics[height=1.5cm]{media/img0913.png}} \\
+     \cmidrule(lr){2-4}
+    \textbf{Mass} & \SIrange{1}{10}{\kg} & \SIrange{100}{1000}{\gram} & \SIrange{1}{100}{\gram} \\
+    \textbf{Manufacturing Cost} & \SI{e5}{\$}  & \SI{e4}{\$} & \SI{e3}{\$}  \\
+    \textbf{Launch Cost} & \SI{e5}{\$}  & \SI{e4}{\$} & \SI{e3}{\$}  \\
+    \textbf{Development Time} & \SIrange{3}{5}{years}  & \SIrange{3}{5}{years}  & \SIrange{4}{8}{months} \\
+    \addlinespace[0.5em]
+    \textbf{Power} & \SIrange{1}{10}{\watt}  & \SIrange{0.5}{2}{\watt}  & \SIrange{0.1}{0.5}{\watt}  \\ 
+    \textbf{RF Data Rate} & \SIrange{0.1}{400}{Mbps}  & \SIrange{10}{250}{kbps}  & \SIrange{10}{2000}{bps}  \\ 
+    \bottomrule
+    \end{tabular}
+    \end{table*}
+    
+    The considerable cost and effort to create CubeSats has therefore sparked ideas for even smaller classes of spacecraft: ThinSats \autocite{twiggs_thinsat_2018},
+    PocketQubes \autocite{PQ1},
+    ChipSats \autocite{manchester_centimeter-scale_2015}
+    and others.
+    These so-called \textbf{``sub-CubeSat'' spacecraft} are often categorised, according to their mass, into: \autocite{sweeting_modern_2018,hein_attosats_2019}
+    
+    \begin{itemize}[itemsep=0pt]
+        \item \textbf{pico-satellites} (\SIrange{100}{1000}{\gram}),
+        \item \textbf{femto-satellites} (\SIrange{10}{100}{\gram}), and
+        \item \textbf{atto-satellites} (\SIrange{1}{10}{\gram}).
+    \end{itemize}
+    
+    Such smaller spacecraft take advantage of the increasing miniaturisation of off-the-shelf mechanisms and electronics to deliver value by significantly decreasing cost and development effort. The cost of a single flight model for an atto-satellite may be less than \SI{1000}{\$} \autocite{manchester_kicksat_2013}, while the development time for one unit can be less than 6 months, even with all subsystems being built in-house \autocite{hein_attosats_2019}.
+
+    As of 2022, more than 350 known pico, femto and atto-satellites have been launched as individual units or as parts of constellations (\Cref{tab:launch}). Developers have extrapolated the CubeSat standard into 1/2U, 1/3U and 1/4U form factors \autocite{gangestad_flight_2015, kulu_nanosats_2021}. ``PocketQubes'' \autocite{PQ1} are a standardised version of modular picosatellites, which can weigh up to \SI{250}{\gram} per cubical unit, and have already started having commercial implementations \autocite{noauthor_unicorn_nodate,noauthor_fossa_2021}. Other design classes for sub-CubeSat spacecraft have been proposed, such as SunCubes \autocite{a_s_u_news_suncube_2016}, PCBSats \autocite{barnhart_enabling_2007,gong_design_2022}, and more \autocite{perez_survey_2016}.
+    
+    
+    One of the most representative examples of sub-CubeSat missions is the KickSat mission designed in Cornell University \autocite{manchester_centimeter-scale_2015,manchester_kicksat_2013}. This mission deployed 105 satellites which belong in the "ChipSat" spacecraft class. ChipSats are atto-satellites where all components and subsystems are integrated on a single PCB board, resulting in extremely low mass and size.
+
+
+    
+
+    \begin{table}[bth]
+    \caption{Number of known nanosatellite (and smaller) launches \autocite{kulu_nanosats_2021,abate_inexpensive_2019}}
+    \label{tab:launch}
+    \centering
+    \begin{tabular}{@{}ll@{}}
+    \toprule
+    CubeSats                        & 1604 \\ %\midrule
+    Nanosatellites (non-CubeSat)    & 86   \\[1ex]
+    PocketQubes                     & 46   \\
+    Picosatellites (non-PocketQube) & 217  \\[1ex]
+    Femtosatellites                 & 4  \\
+    Attosatellites                  & 105  \\ \bottomrule
+    \end{tabular}
+    \end{table}
+
+
+    \subsection{Space Systems Lifecycle Models}
+    \paragraph{}
+    Space systems development has traditionally followed a top-down, waterfall-like approach \autocite{shea_nasa_2017, ECSS-E-ST-10C}. The life cycle of a project typically follows a set of predefined phases, starting from the mission conceptualisation, proceeding with the detailed design definition, and finishing with qualification and then flight \autocite{aguirre_introduction_2013}. This is often modelled as a V-diagram, showing how the system concept influences component design, leading back to system validation in the end \autocite{clark_system_2009,bundesrepublik_deutschland_v-modell_2006}. Development traditionally follows a \textit{stage-gate} process, where a project is evaluated and its continuation determined at specific points during its lifetime \cite{carson_421_2013}.
+
+    %\begin{figure}
+    %    \centering
+    %    \includegraphics[width=\linewidth]{media/Vmodel.drawio.drawio.pdf}
+    %    \caption{The traditional V model in space engineering \autocite{clark_system_2009,ECSS-E-ST-10C}}
+    %    \label{fig:v-model}
+    %\end{figure}
+
+    In conjunction with the waterfall model, incremental or iterative practices are often used \autocite{HEEAGER201822}. \textbf{Incremental} development refers to a method where distinct parts of the design are delivered one at a time; \textbf{iterative} development refers to an approach where the complete system is being refined after each of many cycles --- the goal being that each cycle leads to an improved product, by using the outputs and lessons-learned from the previous cycles \autocite{HEEAGER201822}. More systems engineering concepts have been extensively explored, such as the spiral model \autocite{nasa_engineering__safety_center_aligning_2018}, concurrent engineering \autocite{bandecchi_concurrent_1999}, and Model-Based Systems Engineering (MBSE) \autocite{fischer_implementing_2017}. It is also common to use a \textit{hybrid} approach, combining together different methods \autocite{carpenter_is_2014,garzaniti_toward_2020}, for example by using different product management techniques in different phases/parts of the project.
+
+    These traditional approaches have seen success with large, monolithic missions \autocite{shea_nasa_2017, HEEAGER201822}, especially with safety-critical systems \autocite{kasauli_safety-critical_2018}. However, smaller spacecraft like CubeSats have characteristics (such as lower complexity, lower costs, shorter schedules, higher risk acceptance, easier integration, smaller teams) which do not always justify the overhead added in terms of cost, time and resources added by naively implementing traditional methods \autocite{carson_421_2013,yassine_information_2003,royce_managing_1970,sebok}. 
+
+    \paragraph{}
+
+    In CubeSats, different approaches can be followed, depending on the nature of the project (commercial or educational) and the structure of the team:
+    \begin{itemize}
+        \item \textbf{Sequential approaches}: The typical progression of phases is followed (concept, design, assembly, verification and operations), but with modifications or shortening of each project phase. Usually phases 0, A and B (from conception until preliminary design) are combined into a single Phase AB. In some cases, a demonstration of the mission feasibility using a prototype may be required from Phase AB \autocite{nieto-peroy_cubesat_2019,lubian-arenillas_nanosatellite_2019,tyvak_trestles_2021}.
+        \item \textbf{Evolutionary approaches}: Many CubeSat projects follow iterative or incremental approaches, where design, development, and testing may happen concurrently or repeatedly \autocite{lubian-arenillas_nanosatellite_2019,alanazi_engineering_2019,sousa_cubesat_2021}. For example, it is common to manufacture engineering models or other representations of subsystems, before proceeding to system-wide assembly \autocite{faure_toward_2017}. It is also common to work in an iterative approach for the entire system, by producing different ``versions'' of a CubeSat \autocite{decker_systems-engineering_2016,cappaert_building_2018}. Iterative development can also happen by working on a reduced version of the entire satellite before assembling; this is often implemented through the ``FlatSat'' approach, where subsystems can be tested long before feature completeness \autocite{nasa_cubesat_launch_initiative_cubesat_2017,MAIVP}. Software, more specifically, can be tested continuously and independently from the rest of the subsystems, leading to quick verification \autocite{kiesbye_hardware---loop_2019}.
+        
+        \item \textbf{Emergent approaches}: CubeSat projects have applied approaches fitting the term ``agile'' \autocite{angeli_paving_2014,labarge_cubesat_2014,lubian-arenillas_nanosatellite_2019}, where the focus is shifted from requirements compliance to human interactions and customer satisfaction \autocite{beck_agile_2001}. More approaches again focus on agile software development \autocite{lill_agile_2018,coyle_eecsat_2020}.
+
+    \end{itemize}
+
+    \label{sec:approaches}
+
+    
+
+    \paragraph{}
+
+    Pico-satellites, and especially femto- and atto-satellites, have a number of characteristics and capabilities (notably low cost, small size, fast development, mass production, potential for rapid technology testing, small development teams \autocite{hein_attosats_2019}) that call for new systems engineering methods, specific to them.
+    
+    It is generally accepted that plan-driven approaches are better suited for large projects and teams, which require low risk and predictability \autocite[Sec. 2]{boehm_balancing_2004}. In contrast, sub-CubeSat spacecraft are small developments that can benefit from quickly responding to change, reduction of risk through redundancy, and small, knowledgeable teams. In this case, a traditional approach would add costly overhead in information sharing \autocite{yassine_information_2003}, unnecessary bureaucracy \autocite{boehm_balancing_2004}, high inertia \autocite{carson_421_2013}, and would not adapt quickly to new technological developments \autocite{sebok}.
+
+    \paragraph{}
+
+    In this work, we claim that:
+    \begin{enumerate}[label={\alph*)},itemsep=0pt]
+        \item By creating a tailored methodology, we can produce femto- and atto-satellites in only a few months, with a development cost at least an order of magnitude lower \todo{how to give evidence?} than one of a CubeSat, and with minimal schedule overruns.
+        \item Already existing systems engineering approaches for simple systems can be easily tailored to a femto- or attosat, in order to satisfy the previous claim.
+    \end{enumerate}  %Furthermore, we claim that  % connect with agile?
+    
+
+    %These deviations from the traditional approaches aim to reduce the time needed to design and implement a ``correct'' system. They can be useful in very complex systems, by improving the communication between engineers and reducing the risk of human error. They are also applied to lower-scale, lower-cost systems, since they significantly reduce the great overhead added in each stage of the system design process. %The increase in risk, caused by not following a traditional approach ``to the letter'', %can often be accepted by entities (e.g. universities, startups) who cannot afford the typical cost and effort of a space mission.
+
+
+\section{Research Method}
+%\subsection{Description of process}
+
+To resolve the claims of the previous section, we will propose a systems engineering method \autocite{gerrike_what_2017} tailored to femtosatellites and attosatellites.
+
+In order to gain data and verify our method, we performed a Descriptive Study \autocite{blessing_drm_2009}. The nature of space systems development means that it is difficult to repeat similar conditions in a controlled environment. At the same time, due to the novelty of sub-CubeSat spacecraft, there is not enough available information to perform statistical analyses. Therefore, we applied the \textit{case study} data collection method \autocite{blessing_drm_2009,yin_case_2014}, by following two case studies of miniaturised missions in UL (\Cref{sec:caseintro}).
+
+In order to develop our method, we will start by investigating popular frameworks for rapid prototyping and development, which can be easily tailored to the characteristics of sub-CubeSat spacecraft. After selecting a framework that seems best suited to these characteristics, we will apply the lessons learned from the two case studies, as well as suggestions from the literature, in order to create a more well-tailored method (\Cref{sec:agilee}).
+
+\subsection{Case Studies}
+\label{sec:caseintro}
+
+
+The two case studies selected are missions that, as of 2022, are under manufacturing in the University of Luxembourg (UL) by the SpaSys team. The missions are two femto platforms that are used for in-orbit technology demonstration:
+\begin{enumerate*}[label=\alph*)]
+\item A 10 \(\times\) 10 cm payload, used to test Artificial Intelligence for thermography, and
+\item A 5 \(\times\) 5 cm chipsat, used to test visible light communication.
+\end{enumerate*}
+
+While the first mission is a payload and not an independent satellite per se, the characteristics of its development are similar to the ones of an attosatellite, as there is limited functionality that needs to be achieved with low cost, but there are significant constraints in terms of available space, data budget and interfaces.
+
+ Our selected case studies are differing in type, technologies used, complexity, fractionation and team structure. This diversity is useful to evaluate if our method can be generalised to different spacecraft.
+%\begin{itemize}[itemsep=0pt]
+    %\item Type, as the first is a payload, and the second is a self-sustained spacecraft
+    %\item Complexity, as the independent chipsat needs more ``subsystems'' than the hosted payload
+    %\item Technologies used, both for hardware and for software development
+    %\item Fractionation, as the chipsat mission consists of 3 independent parts
+    %\item Team structure
+%\end{itemize}
+We can then test the \textit{external validity} \autocite{yin_case_2014} of these case studies, i.e.~we will use theoretical results to generalise from their specific findings to generic femto- and atto-satellites.
+
+\subsubsection{AI4Space}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=.8\linewidth]{media/Picture1.png}
+    \caption{Render of the AI4Space payload}
+    \label{fig:ai4space}
+\end{figure}
+
+The objective of the AI4space mission is to launch computer vision algorithms in space and serve as a testbed for the end-to-end development of space systems in UL, in collaboration with the CVI2 research group. %It is the first space mission of the University of Luxembourg.
+The compact-infrared payload of the AI4Space mission aims to detect thermal anomalies on space electronics hardware. The thermal anomalies are detected using Infrared Thermography and Artificial Intelligence. Infrared thermography is a non-invasive method that uses infrared cameras to detect temperature variations of electronic components.
+
+\todo{Please check if the attributions (spasys, UL, CVI2) are correct.}
+
+%\begin{figure}
+    %\centering
+    %\todo{Here we put a picture of the AI4Space board}
+    %\caption{AI4Space}
+    %\label{fig:ai4space}
+%\end{figure}
+
+The payload is a PCB (Printed Circuit Board) and has a size of 100 mm \(\times\) 100 mm \(\times\) 15 mm and it is hosted by the Skyride payload hosting programme of \href{https://www.skykraft.com.au/}{Skykraft}. It has the following subsystems:
+
+\begin{itemize}[itemsep=0pt]
+    \item A Raspberry Pi, containing the onboard software developed in Python.
+    \item A ``mothercraft'' interface, exchanging telecommands and telemetry with the Raspberry Pi.
+    \item A power interface, supplying power to the payload from the mothercraft.
+    \item An Arduino, acting as a target board that shows temperature variation when its clock frequency is modified.
+    \item Heaters, used to increase the temperature significantly to be captured by the infrared cameras.
+\end{itemize}
+ %These components help verify the proof of concept to detect thermal anomalies on space electronics hardware during flight.
+
+
+
+
+\subsubsection{ChipSat}
+
+\begin{figure}[h]
+    \centering
+    \includegraphics[width=.6\linewidth]{media/img0913.png}
+    \caption{Render of the ChipSat PCB}
+    \label{fig:chipsat}
+\end{figure}
+
+ The ``ChipSat'' mission consists of a \acs{PCB} containing 3 independent attosatellite designs, which will be mounted on the side of a microsatellite. The objective of this mission is to investigate the feasibility of free-space visible optical light communication between different satellites of a fractionated system. The ``network'' consists of two types of satellites: a ``primary'', responsible for communication with the ground, and a ``secondary'', responsible only for data generation. For its maiden flight, the ChipSat will be mounted on a microsatellite, but electrically independent from it.  More specifically, the contained components are:
+ \begin{itemize}[itemsep=0pt]
+     \item Microcontrollers, containing the onboard software developed in C++. For the primary, it is an \acs{SoC} that contains an \acs{RF} transceiver.
+     \item LEDs and photodiodes, used to perform low-rate visible communication.
+     \item Miniaturised solar panels, connected to an energy harvester \acs{IC}, generating an average sunlight power of \textasciitilde\SI{200}{\milli\watt}.
+     \item For the primary, a deployable dipole antenna for low data-rate signals.
+     \item For the secondaries, a gyroscope and an ambient light sensor.
+ \end{itemize}
+
+ 
+
+ 
+
+\subsection{Agile}
+\label{sec:agilee}
+
+    Out of the methodologies analysed in \Cref{sec:approaches}, we focused on ``emergent'' approaches, which best suit ChipSat characteristics \autocite{sebok}. These approaches are usually grouped under the term ``agile'', which originates from the \emph{Manifesto for Agile Software Development} \autocite{beck_agile_2001}, published in 2001.%, originally aimed towards the field of Software Engineering.
+
+    %Out of all systems engineering methodologies, this paper focuses on the class of \textbf{Agile practices}.
+    
+
+    %The Agile approach originates from the field of Software Development. It was popularised after the publication of the Agile Manifesto in 2001 \autocite{fowler_agile_2000}, which quotes the following four values:
+    The Agile manifesto aims to increase productivity by pursuing the following four values: \autocite{beck_agile_2001}
+    \begin{enumerate}[itemsep=0pt]
+        \item \emph{Individuals and interactions over processes and tools}
+        \item \emph{Working software over comprehensive documentation}
+        \item \emph{Customer collaboration over contract negotiation}
+        \item \emph{Responding to change over following a plan}
+    \end{enumerate}
+    Agile approaches therefore often follow an iterative cycle \autocite{HEEAGER201822}, each step of which results in a deliverable, working product. 
+
+    While Agile originates from Software Engineering and has been observed to improve the effectiveness of engineers \autocite{noauthor_15th_nodate,noauthor_status_nodate}, it was quickly generalised to systems engineering \autocite{haberfellner_agile_2005}, citing improved engineering efficiency, early Return On Investment, responsiveness to change and increased project control \autocite{douglass_agile_2015,kohlbacher_agile_2011,darrin_agile_2017}.
+
+    \colorlet{No}{MaterialRed600}
+    \colorlet{Yes}{MaterialGreen600}
+    \def\yes{\textcolor{Yes}{Yes}}
+    \def\no{\textcolor{No}{No}}
+    \begin{table*}[h]
+        \caption{Comparison of popular agile frameworks \autocite{boehm_balancing_2004,dingsoyr_decade_2012}}
+        \label{tab:compagile}
+        \label{sec:scrum_intro}
+        \def\arraystretch{1.4}
+        \begin{tabularx}{\linewidth}{@{}L{5cm}@{\hskip 1em}L{1.3cm}L{1.3cm}L{1.3cm}@{\hskip 1em}X@{}}
+        \toprule
+         & Adaptable to hardware & Full lifecyle & Small systems & Comments \\ \midrule
+        \textbf{Kanban} & \yes & \no & \yes & Does not explicitly address verification/testing \\
+        \textbf{Scrum} & \yes & \yes & \yes &  \\
+        \textbf{Lean   Development (LD)} & \yes & \no & \yes & Strategic, risk-driven approach, not focused on systems engineering \\
+        \textbf{Crystal   Clear} & \yes & \yes & \yes & "Crystal" method for very small teams \\
+        \textbf{eXtreme   Programming (XP)}&\no&\no&\yes &  \\
+        \textbf{Dynamic   Systems Development Method (DSDM)} & \yes & \yes & \no & Closer to plan-based ``traditional'' methods, emphasis in management activities \\
+        \textbf{Feature-Driven   Development (FDD)} & \no & \no & \no & Mostly focused on individual practices for software development \\ \bottomrule
+        \end{tabularx}
+    \end{table*}
+    
+    Practices considered to be agile have already been considered and used, partially or completely, in various space missions \autocite{carpenter_is_2014, dillon_faster-better-cheaper_2015, carson_421_2013} and especially in CubeSats \autocite{honore-livermore_agile_2021,dallmann_agile_2015,lill_agile_2018,berthoud_university_2019}. Agile is often used in small teams with limited resources which need turnkey developments and do not have significant risks involved \autocite{carson_421_2013}.
+
+    %It is common to use a \textit{hybrid} approach, combining the agile methodology with traditional approaches \autocite{carpenter_is_2014,garzaniti_toward_2020}. This combination may either involve different product management techniques in different phases/parts of the project, or the modification of an agile method to closer match the traditional V model.
+
+    \paragraph{}
+
+    Agile practices are usually implemented through specific frameworks. In this article, out of the rigorous frameworks defined in \textcite{boehm_balancing_2004}, we are focusing on the most popular ones \autocite{noauthor_status_nodate}, shown in \Cref{tab:compagile}.
+    % \begin{itemize}[itemsep=0pt plus 2pt]
+    %     \item Kanban
+    %     \item Scrum
+    %     \item Lean Development (LD)
+    %     \item Crystal
+    %     \item eXtreme programming (XP) %\autocite{beck_extreme_2008}
+    %     \item Dynamic Systems Development Method (DSDM)
+    %     %\item Rational Unified Process (RUP)
+    %     \item Feature-Driven Development (FDD)
+        
+    %     %\item Rapid application development
+    %     %\item Scrum
+    %     %\item \todo{ref} Crystal (???)
+    % \end{itemize}   \label{sec:scrum_intro}
+
+    %\todo{\st{What happens if agile is not followed correctly? (+ref)}}
+
+    %\paragraph{}
+
+    
+    In order to choose a baseline to develop a tailored method, we selected a network out of those based on the following criteria:
+    \begin{itemize}
+        \item \textbf{Easy adaptability to hardware}: Most Agile frameworks are specifically built around software-based practices and tools, such as daily unit testing and instant integration, which cannot be implemented in a larger system. In this article, we consider frameworks that can be easily applied to physical systems.
+        \item \textbf{Covering full lifecycle}: Many Agile frameworks cover only certain parts of a product's lifecycle, or provide solutions only for one specific project management aspect. For convenience, we consider frameworks that cover aspects from planning to verification.
+        \item \textbf{Small systems}: Some Agile frameworks are built for larger systems with higher complexity and larger teams. In this work, we consider frameworks that claim to work for \textasciitilde 10 maximum people.
+    \end{itemize}
+
+
+
+    From \Cref{tab:compagile}, it seems that \emph{Scrum} and \emph{Crystal Clear} are the most suitable frameworks for our proposal. In this work we will focus on \emph{Scrum}, because of its very high popularity and available literature \autocite{noauthor_status_nodate}. Scrum has also specifically been proposed for use in Systems Engineering, especially for systems that are accepting to rapid changes, by \citeauthor{bott_analysis_2019} \autocite{bott_analysis_2019}.
+    
+    However, we do note that our search is by no means exhaustive; other frameworks may also present relevant opportunities for tailoring.
+
+    
+    % However, as the complexity of 
+    % However, as the scale, cost and risk of space missions is being driven down, alternative approaches have started being applied to systems development, with concepts such as concurrent engineering , spiral development 
+
+    % ideas: propulsion, ic, highest point
+
+    % The contribution of this article involves the application of Agile Systems Engineering concepts to the development of spacecraft smaller than CubeSats. In traditional projects, the number of development iterations is strictly limited by cost and time; in picosatellites and smaller objects however, the far more relaxed restrictions allow implementing different, more practical approaches to systems engineering and project management. Especially for femtosatellites and smaller, the number of spacecraft that can be manufactured or even launched during one iteration is \todo{extremely high} \autocite{hein_attosats_2019,adams_theory_2020}.
+
+
+
+
+
+%Since the implementation of agile practices in the software industry has been evidenced to increase productivity \todo{rephrase} \autocite{noauthor_15th_nodate,noauthor_status_nodate}, parts of the space engineering community have started adapting iterative and agile engineering practices for space projects. Especially for low-cost and low-criticality projects such as micro-satellites or CubeSats \autocite{faster-better-cheaper-dillon}
+
+
+\section{Applying Agile to sub-CubeSat spacecraft}
+
+In order to develop the new method, we will apply the characteristics of sub-CubeSat spacecraft to published findings related to agile systems engineering. We will also use the lessons learned from the two case studies (\Cref{sec:caseintro}).
+
+\subsection{Distinctive femtosatellite characteristics}
+
+To prepare a set of guidelines for the use of Agile in sub-CubeSat developments, we first present some of the most notable distinctive characteristics of such spacecraft \autocite{hein_attosats_2019,barnhart_low-cost_2009,manchester_centimeter-scale_2015}:
+\begin{itemize}[itemsep=0ex]
+    \item Low design complexity %\todo{+}
+    \item Low manufacturing cost
+    \item Low launch cost, due to low mass
+    \item Femtosatellites and smaller spacecraft often have little distinction between subsystems in the traditional sense. Using \acf*{SoC} technology, multiple or even all subsystems can be combined into a single component \autocite{wolf_multiprocessor_2008}.
+    \item Technology reuse is not yet explored in detail. In contrast to the CubeSat standard and the relevant deployer specifications and component market \autocite{CDS14}, femtosatellites and smaller are not supported by off-the-shelf specifications or modules as of 2022. However, standardisation for PocketQubes is already underway \autocite{PQ1, PQ91}.
+    \item Interface requirements for the deployer and/or launcher are invariants and will usually serve as the main drivers for the design.
+    \item Engineering teams working on sub-CubeSat spacecraft usually consist of few people, and are not spread into different subteams.
+    \item The facilities for manufacturing and testing such spacecraft can often be available in-house \autocite{triantafyllopoulou_qubik_2020}.
+\end{itemize}
+
+\subsection{Agile principles} \label{sec:agile_principles}
+
+\citeauthor{douglass_agile_2015} (\citeyear{douglass_agile_2015}) \autocite{douglass_agile_2015} provides seven core ideas for agile methods. In this section, we will restate and analyse their applicability to sub-CubeSat projects.
+
+\subsubsection{Work Incrementally}
+
+If a product is separable into distinct parts, which can be developed, tested (and preferably deployed) independently, then the work can be easily divided into multiple cycles.
+
+When a system is considered ``complete'', i.e.~it is operational and fulfils the basic objectives of a mission, incremental development can turn into iterative development, where the focus is on the rework and improvement of the existing system, rather than the implementation of critical missing features \autocite{HEEAGER201822}. This is especially applicable to femto- and attosats, as the time between conception and manufacturing can be very short.
+
+The time between each cycle varies between each projects. While 2 weeks are common in software engineering projects, systems where hardware and physical effort is involved may benefit from longer iterations (4--6 weeks).
+
+\subsubsection{Plan Dynamically}
+
+A common myth is that Agile practices call for no planning or bureaucracy \autocite{douglass_agile_2015}. \textcite{douglass_agile_2015} claims that \textit{``planning is important but only if it is accurate''}. Agile principles introduce a degree of uncertainty in all layers of a design, from customer requirements to implementation. The project plan therefore should be defined, but also dynamic: it should reflect this uncertainty and be frequently updated (e.g.~every 1--2 months) to improve the assumptions made about the needed amount of work and ``velocity'' of the team.
+
+
+
+\subsubsection{Actively Reduce Project Risk}
+
+In terms of project planning, uncertainties can introduce risk. Design changes or active actions can help to mitigate risks that are identified early or late in the design.
+
+In our experience, focusing on the critical path in terms of schedule, or the components with the highest impact in the system, will help identifying the most threatening risks. For example, any interaction with an external supplier or provider is coupled with uncertainty and delays, and should hence be started as early as possible during the project. To mitigate against a possible chip shortage, designers should procure critical and irreplaceable components as early as possible (even during the design), and maintain a reliable stock.
+%predictable
+
+% PROACTIVE ACTION: CHIPSAT CRITICAL COMPONENTS
+
+\subsubsection{Verify Constantly, Integrate Continuously, Validate Frequently} \label{sec:cicd}
+
+Verification in space systems is usually formal and follows a unit--subsystem--system path \autocite{bundesrepublik_deutschland_v-modell_2006}. On the other hand, in software systems, verification is done through automated test suites, and can be completed in just a few minutes \autocite{beck_test_2002}.
+
+While it is easy to test spacecraft software, especially when complemented by a hardware-in-the-loop environment \autocite{fritz_hardware---loop_2015}, the engineering effort to manufacture and test space hardware can often take years. This reduces the responsiveness to change and the chance to identify errors early in the design \autocite{garzaniti_effectiveness_2019,peterson_when_2021}.
+
+However, when developing picosatellites and smaller spacecraft, the manufacturing and assembly can be made in a few months with little overhead. This means that \textbf{the verification of representative hardware can become an important part of the design process, as verification can happen at the end of each development cycle}. The hardware used in these cases could usually resemble a Structural Model, a Development Model or an Engineering Model \autocite{ECSS-E-HB-10-02A}. Engineering Models in particular should be representative in terms of form, fit and function, without requiring hardware and processes suitable for space.
+
+Especially for femto- and attosattelites, low launch costs mean that there is minimal effort required to reach orbit. \textbf{A system can be iteratively verified by sending its different versions into orbit.} Lessons learned from the actual operation of a satellite will then be used to improve the next iterations. In software engineering, this concept is often referred to as \textbf{Continuous Integration/Continuous Delivery (CI/CD)}, and involves constant releases of a product which, while not perfect, are fully functional and operational \autocite{beck_extreme_2008,shahin_continuous_2017}.
+
+Alternatively, as a middle-ground solution, high-altitude balloon flights, or even actual usage of the spacecraft on the ground, could be implemented \autocite{adams_theory_2020}.
+
+Given the above, we can summarise the different verification methods for sub-CubeSat spacecraft: \autocite{ECSS-E-HB-10-02A}
+\begin{enumerate}[itemsep=0pt]
+    \item Analysis and Review of Design
+    \item Testing (software only)
+    \item Testing (software and hardware)
+    \item Field operations (on-earth demonstrations, suborbital flights)
+    \item In-flight operations
+\end{enumerate}
+
+We note that, based on the available resources and objectives, a different verification method out of the above can be chosen for different cycles, phases or parts of the same project. We also note that this sequence does not need to be followed in order; for example, after a test flight, the team may continue with hardware testing of the next iterations.
+
+Validation \autocite{ECSS-E-HB-10-02A}, usually in collaboration with the customer, also happens regularly in the context of Agile.
+
+
+% r-selected spacecraft (?)
+% design reuse
+
+%\paragraph{Integrate Continuously}
+
+% \subsubsection{Validate Frequently}
+
+% Verification checks if the system built was correct, while validation checks if it was the correct system for the intended objective \autocite{ECSS-E-HB-10-02A}.
+
+% In the context of Agile, validation happens regularly in collaboration with the customer.
+
+\subsubsection{Modeling Is Essential for agile MBSE}
+
+\textbf{Model-Based Systems Engineering (MBSE)} practices can be applied to agile systems engineering, especially if they do not need considerable overhead and are easy to implement \autocite{tang_mbse_2018,douglass_agile_2015}.
+
+For example, an interesting concept in software engineering is that of \textbf{Test Driven Development (TDD)}. In TDD, automated tests are written before the development of the code itself \autocite{beck_test_2002}. The task of the developer is then to make sure that the developed system passes all the tests. Consequently, in TDD, the test itself serves as a specification or a model for the requirements of a system.
+
+Models can also be used for automated generation of software \autocite{perrotin_taste_2012,bychkov_using_2018}, or for the reduction of the work needed to document a system. However, mechanicals and hardware \autocite{de_vos_documentation_2022} still require manual effort to integrate into a model.
+
+%Another example application of MBSE is in \textbf{documentation}.
+
+
+\begin{figure}
+    \centering
+    \includegraphics[width=\linewidth]{media/Triangle.drawio.pdf}
+    \caption{The triangle model}
+    \label{fig:nabla-model}
+\end{figure}
+
+\section{Proposed Methods}
+\label{sec:proposed_methods}
+
+In this section, we will propose two agile methods that follow from the analysis performed in the previous paragraphs. The first one is the result of getting inspiration from the traditional V-model, and modifying it with some additional flexibility, so that it meets the definition of agile. The second one starts by directly implementing the Scrum agile framework, and applying to it the constraints of a sub-CubeSat spacecraft.
+
+\subsection{The Triangle model}
+\label{sec:the_triangle_model}
+
+In the core ideas described in the \hyperref[sec:agile_principles]{previous section}, the overarching theme of \textbf{iterative development} is dominant. % adding many fancy words will make me sound more important. if your paper doesn't include "overarching" then i won't cite it.
+We can therefore adapt the V model into a \textbf{triangle model}, where paths exist for \textbf{going back to the conceptual stage} at every point during the design. We will use this triangle model as a representation \autocite{gerrike_what_2017} for the proposed model.
+
+Instead of requirements, the triangle model originates from \textbf{needs and objectives}. We define these as qualitative targets that a customer or entity has for a mission, such as \emph{creating space heritage within an organisation}, or \emph{measuring temperature variations during reentry}.
+
+Given the needs and objectives, the more specific and quantitative goals are stated later. We still refrain from using the word ``requirements'', as we want to avoid the rigour and effort connected with defining low-level requirements at the beginning of a project. However, we note that these goals still need to be well-defined, and can refer to the mission, the system, or specific units. For example, a goal would be to \emph{take at least 10 measurements during reentry}, \emph{develop a spacecraft with a \(<\)25\si{\gram} mass}, or \emph{have a data rate of at least 100\si{kb/s}}.
+
+\paragraph{}
+
+The next steps in the process follow the design and implementation. We deliberately did not distinguish between \emph{high-level} and \emph{low-level} design, or \emph{subsystem-level} and \emph{component-level} design. This is done because pico-scale spacecraft can incorporate different subsystems into single components or units. It is up to each team to determine if they will split the design into multiple levels, based on their size and objectives.
+
+Verification and validation follow after implementation. Validation marks the end of one iterative or incremental cycle. The developers can then proceed with the operation of the validated product (\Cref{sec:cicd}), and they can start the next cycle from a refinement of the initial goals.
+
+\paragraph{}
+However, the triangle model does not only follow this circular path: Any point in the triangle can lead to \textbf{back-tracking}, i.e. going back to the goals definition. This is essentially the \textbf{mechanism to respond to changes} during the design. For example, a team might start with a goal of \emph{reaching a data rate of at least \SI{100}{\kilo\bit/\second} with a \SI{5}{}\(\times\)\SI{5}{\centi\meter} attosat}. During the implementation phase, they might find out that their radio transceiver is too large to fit on the attosat's PCB.
+They will then be forced to backtrack, and change their goals to increase the satellite's size, or support slower data rates with a smaller transceiver.
+
+A significant difference between typical incremental models \autocite{sebok} and the triangle model is that the latter does not require going through all the phases before back-tracking: Lessons learned during design or implementation may immediately lead to a redefinition of the goals, without a need to go through the next phases.
+
+An implementation of the triangle model also does not need to begin from the top left. The rapidly-developing COTS component ecosystem means that, for example, a proposed implementation may be available before a specific use case has been prepared. In this case, the system becomes largely \textbf{capability-driven} instead of goal-driven.
+
+\subsection{Sat-Scrum}
+\label{sec:sat_scrum}
+
+\begin{figure*}
+    \centering
+    \includegraphics[width=\linewidth]{media/Scrum.drawio-2.pdf}
+    \caption{Example of applying Scrum to sub-CubeSat scale space projects}
+    \label{fig:scrum}
+\end{figure*}
+
+
+While the Triangle Model proposed in \Cref{sec:the_triangle_model} presents significant differences in terms of flexibility in project management, it is still covering a high level of the design process, and, as a tailoring of a more ``traditional'' process, may not fully take into advantage the capabilities offered by miniaturised spacecraft.
+
+Therefore, continuing the analysis presented in \Cref{sec:agilee}, in this part we will focus on \emph{Scrum}, and how it can be adapted to our target platform.
+
+Scrum is a lightweight agile framework that covers all life cycle activities of a project or a system, and is based on empiricism, focusing on transparency, inspection and adaptation \autocite{schwaver_definitive_2020,bott_analysis_2019}.
+
+%Out of all explored Agile frameworks, ``\textbf{Scrum}'' has especially received popularity in modern software engineering teams \autocite{schwaver_definitive_2020}. \todo{...} 
+
+The definitions of Scrum \autocite{schwaver_definitive_2020} contain a lot of nuance and terminology that is suggested to be followed by participating projects, to encourage a shift in mentality from a traditional plan-based approach. Here we will focus on the idea of \textbf{Sprints}, which correspond to the cycles of an incremental/iterative process. A sprint starts from a backlog (prioritised list of work items) and results in a sprint goal, which might be the next version of a product.
+A sprint usually includes:
+\begin{itemize}[itemsep=0pt]
+    \item \textbf{Sprint Planning}, a long meeting where a goal and plan is laid out for the next sprint
+    \item \textbf{Daily Scrums}, which are 15-minute (timeboxed) meetings that take place to gauge progress and update the short-term planning.
+    \item \textbf{Sprint Review}, a technical session at the end of a sprint, where its outcome is reviewed and technical lessons learned are assessed.
+    \item \textbf{Sprint Retrospective}, a meeting called after the Review, where the focus is on interactions, processes and tools, and how the team can solve problems that occured in the future.
+\end{itemize}
+
+%Instead of a list of requiremenst, each Sprint is accompanied by a \textbf{sprint backlog}, a prioritised list of work items that are needed to improve the system. This backlog is created before the beginning of each Sprint.
+Scrum also defines the positions of the ``Scrum Master'', the Product Owner and the Developers, the last two of which are the main responsibles for selecting the backlog work items.
+
+\paragraph{}
+
+
+Applying the idea of Sprints to a space project, in the same vein as the triangle model, can result to something similar to what is shown in \autoref{fig:scrum}.
+
+In this case, every sprint results in a functional, improved product.
+During development, verification can be done through one of the five methods listed in \Cref{sec:cicd}. In this case, even \textbf{in-orbit testing can be part of the normal product development procedure} in each sprint. Flight models do not need to be ``feature-complete'', only operational; this is aided by the low resources that mainly femto- and attosats need to be launched, essentially if the manufacturer takes advantage of economy-of-scale effects \autocite{hein_attosats_2019}.
+
+Due to the complexity of the systems, the duration of a sprint in this case will lean towards the longer end of \SIrange{4}{6}{weeks}. The verification process also needs separate considerations, since it might not be able to be fully automated as in a software system.
+
+In the case of physical hardware, verification might need some days or weeks to be performed, as an activity separate to development. It might include time spent for procurement or assembly. In specific project stages or situations (e.g.~breadboard models, or modular assemblies) these activities might be able to be completed in less than a week, in which case they can be a regular part of the sprint.
+
+However, larger developments (e.g.~producing Engineering Models) or tests (e.g.~test flights) might require significantly more involvement and cannot be completed as part of a single sprint. In this case, the ``review \& retrospective'' parts for every sprint cannot fully reflect the verification done in the sprint. However, they lessons learned and results from this process can be implemented in future sprints.
+
+\paragraph{}
+A few other qualities of Scrum that might be interesting to analyse are:
+\begin{itemize}
+    \item In Scrum, there is no clear separation between different functions of the developers: Design, development, quality assurance or analysis. Team members are self-managing and distribute work items based on their discretion.
+    \item Scrum encourages transparency and information sharing for all parts of the work. This can be achieved by using the appropriate project management tools, having a central archive to gather results and information, avoiding personal communications, or even by sharing a common workplace.
+    \item We note the differences between `incremental' and `iterative' development, as defined by \citeauthor{HEEAGER201822} \autocite{HEEAGER201822}. In the beginning of the project, a ``scrum increment'' will be identical to an ``agile increment'', as parts of the system will be built for each Sprint until it is functional. However, in the largest part of a project, a ``scrum increment'' will more closely match an ``agile \emph{iteration}'', where the focus is on the rework of the system so that it implements more of the defined goals.
+    \item Especially in a space system, the complexity of managing different increments, versions, physical products, test campaigns and even launches, would require significant \textbf{tooling} to remove the management overhead and make access to information easy. A combination or adaptation of tools already available in the software engineering, project management and space systems engineering might be useful for this purpose. For example, a Version Control system could be used to store different versions of software, designs or documentation; a Project Management tool built for Scrum can support the work allocation and planning for team members \autocite{ciancarini_open_2020}; and Model-Based Systems Engineering can be used to formalise the most crucial and high-level parts of the process \autocite{boggero_mbse_2021,douglass_agile_2015}. However, it is important that the tooling used does not act as an impediment to the daily work of the developers.
+\end{itemize}
+
+%\todo{Maybe add an extra paragraph here}
+
+
+%\begin{figure*}
+    %\centering
+    %\includegraphics[width=\linewidth]{media/Screenshot 2022-08-29 162213.png}
+    %\caption{The W-model for spacecraft development \todo{figure to be removed}}
+    %\label{fig:w-model}
+%\end{figure*}
+
+\section{Case Studies}
+
+In this section, we will provide details on the Case Studies presented in \Cref{sec:caseintro}. We will start by presenting the development flow of these missions, as well as some practices that were followed and lessons learned. We will finally emulate the application of the methods of \Cref{sec:proposed_methods}, following a ``counter-factual'' approach, since both missions already started before these methods were developed \autocite{hein_evaluating_2020}.
+\todo{Too informal?}
+
+
+%\item Systems Engineering
+
+% !!!!!!!!!!!! self-documenting stuff -> possible in software but not in hw?
+
+\subsection{AI4Space}
+\label{sec:ai4spaceresults}
+
+
+
+ %\subsubsection{Project Description}
+
+%TODO: Put this somewhere
+The project began with understanding the needs and objectives of the AI-driven payload. Then, the software and hardware architecture were documented to satisfy the space mission objectives. While we initially used MBSE to model requirements during the development phase, there was not enough time to complete and utilise this formalisation. COTS components were chosen instead of space-grade products since they were easily available, less expensive and reduced software and hardware development time. Additionally, ready-to-use development platforms such as \href{https://www.edgeimpulse.com/}{Edge Impulse} were used to embed AI algorithms on the computer module to reduce development time. Finally, the functionalities of the payload were tested using a breadboard model to validate the proof of concept, before building the qualification and flight models. %This was undertaken during the flight model PCB board development. This system engineering approach is explained further in the following sections. 
+
+% \subsubsection{Systems Engineering}
+
+% \begin{itemize}
+%     \item  Functioning/Shippable system from day N
+%     \item Multiple iterations/rewrites
+%     \item \textbf{Test-Driven Development}
+%     \item Use of MBSE (e.g. Python Construct)
+%     \item Continuous Integration
+%     \item Technology reuse
+%     \item Lessons-learned resuse
+%     \item Project Management
+% \end{itemize}
+
+ % \begin{figure}[h]
+ %     \centering
+ %     \includegraphics[width=\linewidth]{media/Untitled-2022-03-17-1640.png}
+ %     \caption{(TODO)}
+ %     \label{fig:waterfallforai4space}
+ % \end{figure}
+
+ %Several practises from the above were implemented as part of the AI4Space project, namely:
+
+For the development of AI4Space, we experimented with a tailored approach that incorporated various iterative practices adhering to the agile manifesto \autocite{beck_agile_2001}, but without belonging in a concrete framework:
+%The development approach used was iterative, meaning that:
+\begin{itemize}
+\item We designed a system that was \textbf{shippable from the early stages}. We implemented the basic operational functionality with high priority in the first few months. This included basic operational functions, such as telemetry and telecommands, downlinking science data, or command scheduling (``time-tagging''). It also included at least a proof-of-concept for the payload, with the basic operations and sensor code being written only over the first 2 weeks after development started.
+\item \textbf{Multiple functional iterations} were made during development.
+We roughly followed the ``Sprint'' pattern, performing one iteration every 2 weeks, which was concluded with a review and planning meeting at the end of the sprint.
+%Even though only 3 developers were consistently working on the project, we conducted daily meetings to discuss progress and blocking issues between the developers, either in-person or remotely.
+\end{itemize}
+
+In order to manage all of the above, a hybrid method was used:
+\begin{itemize}
+\item The major mission milestones were managed in a traditional way, following a \textbf{Gantt chart}, and splitting the mission into specific large work packages, starting from \emph{Preparation} until \emph{Scientific Exploitation} of the results.
+
+% \begin{itemize}
+%     \item \textbf{Preparation} (analysis of requirements, orbits, purchase of basic hardware)
+%     \item \textbf{Launch contracting}
+%     \item \textbf{Design and Development}, split into simultaneous developments:
+%     \begin{enumerate*}
+%         \item Ground Segment
+%         \item Breadboard Model
+%         \item Qualification Model \& Flight Model
+%         \item Payload software
+%         \item Concept of operations
+%     \end{enumerate*}
+%     \item \textbf{Assembly}
+%     \item \textbf{Qualification}
+%     \item \textbf{Operations}
+%     \item \textbf{Scientific Exploitation}
+% \end{itemize}
+\item For the design and development, \href{https://gitlab.com/}{\textbf{GitLab}} as a tool for project management, work item tracking, and result sharing.
+%\item For the \emph{Design and Development} work package, we used a typical issue-based workflow, starting from software development. 
+\item For the assembly, we created a standard assembly procedure which included the list of the required components. Hardware stock tracking was done using \href{https://inventree.readthedocs.io/en/latest/}{Inventree} to monitor the components purchased, current stock and components to order. %We realised issues with assembly due to consistent delays in shipment or sudden chip shortage and hence the mission deadlines were extended considerably during this stage.
+\end{itemize}
+
+While we could easily adopt agile practices for the payload's software, the constraints imposed by hardware (mainly cost, time and part availability) are harder to work with \autocite{garzaniti_effectiveness_2019,peterson_when_2021}. In the project's context, we worked simultaneously on a functional \textbf{Breadboard Model} that was developed incrementally, and the PCB designs for the \textbf{Qualification/Flight} models. The following principles were followed throughout development:
+\begin{itemize}
+    \item ``Stand-in'' parts were used when a component or hardware function was not readily available. We deemed it more important to have a \emph{functional} instead of a \emph{representative} model through the early stages. For example, we used a Raspberry Pi 3 instead of a Raspberry Pi 0 for the early days of development.% and replaced an I2C bus switch with simple load switches.
+
+    It is important to note that the loss of representativeness has to be recorded and known in the team, so that fewer surprises show up later in the process. In some cases, it might even be possible to emulate the differences in the configuration, for example by limiting the amount of memory available to the Raspberry Pi in software.
+    \item The software was implemented in conjunction with the hardware. 
+
+    Specifically for AI4Space, our main platform was a Linux distribution on the Raspberry Pi. While it was possible to develop most parts of the software independently from the hardware ("off-line"), we opted to validate the written software on the hardware models immediately, as part of a CI/CD process.
+    \item \acs*{MBSE} was used for the definition of interfaces. The ``model'' in this case was Python code, which included the formal definition of the interfaces, along with documentation. Python's \texttt{construct} library \autocite{bulski_construct_2020} could then immediately parse and generate telemetry \& telecommands, using only this single source of data. We also prepared a script that automatically created human-readable documentation for this interface.
+    \item Parts of the system were tested automatically, using the Robot automation framework \autocite{robot_framework_foundation_robot_nodate}. The specific framework is not software-centred and provides a user-friendly test format, inspired by the concept of ``user stories'' in Behavior-Driven Development \autocite{north_whats_2007}. This means that:
+    \begin{itemize}[itemsep=0pt]
+        \item Testing is not limited to software functions only; An appropriately configured system can also perform hardware verification.
+        \item Testers can be independent from the developers, since our tests were reasonably decoupled from the code they test.
+        \item Test stories could also be used for nominal procedures, such as clearing spacecraft logs.%, or preparing for deployment.
+        \item There can be an additional slight learning curve, since developers need to become familiar with the domain-specific language introduced by the framework.
+    \end{itemize}
+\end{itemize}
+
+During development, we also observed that:
+\todo{Should I just combine the lessons learned from each mission into a single section?}
+\begin{itemize}[itemsep=0pt]
+    %\item Requirements and procedures requested by external stakeholders are usually fixed and unchangeable. In contrast to an ideal Agile environment where the developing team has more liberty and flexibility \autocite{schwaver_definitive_2020}, space systems may have to be driven by hard, unnegotiable constraints.
+    % (mentioned above as well)
+    \item The nature of the team meant that members had to spend a significant amount of their time in tasks unrelated to the project.
+    \item Not enough time was dedicated to documentation, which steepened the learning curve for new members. However, the fast pace of development meant that any written documentation would very quickly become obsolete, even if it was written at a high level only. Ideally, the appropriate level of documentation would be written as a required part of development, or the use of automated documentation generation tools could be extended.
+
+    Documentation need not only explain the function of a system; it can also contain information about the design justification. In our cases, this was done on a rolling bases: When opening and closing an issue on Gitlab, we added at least a short sentence explaining the reason for this action. %This proved helpful in the later stages of the project, when we needed to reflect on specific past decisions . Keeping such a ``development diary'' 
+    \item Some unplanned events caused ``road-blocks'' that had to halt development and break momentum, such as procurement delays, supplier stock issues, and equipment or network issues. After these, we devised a ``Minimum Working Environment'' that required only a personal computer for a developer to work towards their goal.
+    \item For software development, we followed an empirical approach instead of laying out a detailed plan beforehand, and we did not over-design, meaning we did not add more functionality, modularity or levels of abstraction, apart from what was needed in each iteration. This meant that parts of the code had to be \textbf{refactored} in some situations. %For example, we moved \textasciitilde 200 lines of Javascript code to Python to encourage using a common interface.
+
+    While detailed planning might prevent time spent on refactoring, the Scrum Guide \autocite{schwaver_definitive_2020} suggests that empricicism and lean thinking reduce wasted time. In our case, many of those `adaptations' resulted only from the direct application of lessons learned during the project, that would be harder to recognise earlier in the project.
+    \item Team members were involved in all aspects of the project, including development, verification and manufacturing. However, in the case of AI4Space it would be ideal to allocate at least manufacturing to another team or an external contractor, so as to not impede the momentum and progress of every iteration.
+\end{itemize}
+
+\begin{figure}[]
+    \centering
+    \includegraphics[width=\linewidth]{media/AI4SpaceImaginary.drawio.pdf}
+    \caption{Theoretical example of AI4Space scrum schedule}
+    \label{fig:theoretical_ai4space}
+\end{figure}
+
+\paragraph{}
+The approach taken in the AI4Space fits the most basic approach of the triangle model, as described in \Cref{sec:the_triangle_model}. While the original goals of the mission were defined, after some iterations of design, proof of concepts and rudimentary testing, they were redefined so that the process could continue again; the team followed this cycle three times, back-tracking after the first breadboard proof-of-concept, and after the implementation of the AI algorithm.
+
+As mentioned in \Cref{sec:caseintro}, we can theorise the effects of applying the ``Sat-Scrum'' method of \Cref{sec:sat_scrum} to AI4Space. This could lead to a more structured workflow, as shown in \Cref{fig:theoretical_ai4space}. In this case, two \emph{in-orbit validation} phases are implemented: The first is used as a technology demonstrator of the platform, only with some rudimentary functionality; the second would include a complete implementation of the original need. Some advantages of applying this method over a simple triangle would be:
+\begin{itemize}[itemsep=0pt]
+    \item Clearer project structure and task allocation, using well-defined procedures and tools, and streamlined interactions between developers
+    \item ``Forced'' communication between members: encourages information sharing and reduces misunderstandings
+    \item Verification and documentation would be required for each sprint. Documentation would only need to be updated every month, and not at very fast intervals that would render it obsolete immediately.
+    \item The inclusion of more Engineering Models would prevent last-minute issues from blocking the production of Qualification Models, at the expense of some administrative overhead and cost.
+\end{itemize}
+
+However, we note that the structure of \Cref{fig:theoretical_ai4space} is not a `plan' in the conventional sense: Since Scrum is derived from empiricism and emergence, the actual decisions would be taken during the development cycle. Nonetheless, milestones such as launches cannot be changed, and have to be considered as invariants by the Scrum team.
+
+\todo{Estimated manufacturing price?}
+%\todo{Should I use USD or EUR as currency here?}
+%Our theoretical, test-heavy schedule would add extra cost to the previous approach. With ballpark calculations of \SI{100}{\$} for engineering models and \SI{1000}{\$} for flight-ready models (including components, board manufacturing, assembly), the total manufacturing cost would rise to \textasciitilde\SI{4500}{\$}. At a launch cost of \SI{100000}{\$/\kilo\gram}, a rideshare launch for a \SI{50}{\gram} board would be \SI{5000}{\$}. The total manufacturing cost would then be \SI{14500}{\$} for the entire project, over 9 months. \todo{probably remove this paragraph/or just include results + tests + extra costs + workmanship}
+			
+\subsection{ChipSat}
+\begin{figure}[]
+    \centering
+    \includegraphics[width=\linewidth]{media/ChipSatImaginary.drawio.pdf}
+    \caption{Theoretical example of the ChipSat scrum schedule}
+    \label{fig:theoretical_chipsat}
+\end{figure}
+
+The ChipSat project also followed some agile principles, in combination with some traditional planning:
+\begin{itemize}
+    \item A \textbf{Gantt chart} was made using assumptions early in the project. However, it was seen that frequent updates to the Gantt chart were inevitable,  but it is regularly updated after any new development.
+    \item Continuous changes in the requirements, capabilities and results meant that the project had to be \textbf{easily adaptable} to any changes. For example, the \acs{PCB} design had to be updated a few times in all stages of the project to accomodate new geometry restrictions.
+    \item The team did not set in stone the number of iterations or designs that would be manufactured. Rather, since the procurement and manufacturing cost was low, a complete chipsat board was procured after every design iteration.
+    \item Software and hardware development both started from day 0. This produced invaluable information regarding the feasibility of different design choices, and provided an approximate (yet adequate) reference model for internal use, but also for all external collaborators.
+    \item \textbf{Project risk} was identified and attempted to be reduced. Especially regarding chip shortages, the procurement process for critical \acsp{IC} was initiated immediately after a relevant design decision is taken, to prevent chip shortages from delaying the project by many months.
+    \item Due to uncertainties, different ``branches'' or options of the project had to be worked on at the same time until resolution (e.g.~version with/without batteries, with deployable/fixed antenna, etc.)
+\end{itemize}
+
+Modelling the design process with the triangle model of \Cref{sec:the_triangle_model} reveals that the definition of goals in this project (in terms of payload, features and performance) began after building the physical proof-of-concept --- i.e.~the model did not start from the top, but started from the implementation, and then back-tracked to the goals definition.
+
+\Cref{fig:theoretical_chipsat} demonstrates a hypothetical Scrum approach of the ChipSat development. Here we note that in-orbit validation can first happen as an integrated payload (or even a high-altitude baloon flight), while the ChipSat can be released as an independent spacecraft on a second mission.
+
+The advantages of this approach would be similar to the ones for \hyperref[sec:ai4spaceresults]{AI4Space}. However, the smaller size of the system, combined with a mass of \(<\)\SI{20}{\gram} for the freestanding board, would make it more convenient to produce multiple models and test in real-world conditions. These produced functional ChipSat models could even be used on the ground for outreach, or as wireless, self-sufficient Internet of Things (IoT) nodes \autocite{adams_theory_2020}.
+
+\section{Conclusion}
+
+In this paper, we explored how the unique characteristics of sub-CubeSat spacecraft can provide opportunities for tailored design methods, which take advantage of their low cost and potential for rapid manufacturing and testing. To develop a tailored model, we received inspiration from two case studies in the University of Luxembourg, and from the principles of Agile systems engineering. We then devised two lifecycle models for the development of sub-CubeSat spacecraft, and we verified their theoretical application to the two case studies.
+We observed that by following one of the proposed models, we could keep development time for such missions down to 6--9 months, while iterating on physical builds of the system every \textasciitilde 1 month. This approach could reduce project risk by giving almost instant feedback to the designers about their design choices. By taking advantage of economy-of-scale effects, manufacturers can launch sub-CubeSat spacecraft as part of the development process, but keep manufacturing and testing costs in proportion to the spacecraft's mass.
+For future work, we propose more research on how other agile frameworks tailored to systems engineering (such as Crystal, SAFe or RUP \autocite{boehm_balancing_2004,bott_analysis_2019}) and MBSE could be applied to gram-scale spacecraft. We also propose investigation or development of specific tools to aid teams in their day-to-day task management. Finally, we propose further validating proposed methods for these spacecraft, by comparing the application of different methods to actual case studies.
+
+%\todo{Add some more conntent}
+%\todo{
+%summary, conclusions from real life, future work
+%}
+%Applying a well-defined agile method can bring structure to the chaos of designing a space mission in 6 months or less.
+
+%The flexibility and responsiveness to change offered by Agile is extremely useful to defend against:
+
+%\begin{itemize}
+    %\item Unexpected setbacks
+    %\item Component shortages
+    %\item Changes to external requirements
+%\end{itemize}
+
+% Conclusions
+% - 10 members max
+% - soft claims
+
+% Future work
+% - Investigate other agile frameworks like SAFe, Crystal, 
+% - More validation, apply methods to actual projects
+% - Apply DRM
+% - Develop and use tools
+% - See results from the two projects
+% - Adapting to groups with many projects at the same time
+% - Somehow reduce risk (agile depends on capable engineers)
+
+%In the future, we expect systems engineering research to focus on identifying how an agile process can be automatically and systematically applied to the design of hardware as well, instead of just software. There is also ample ground to cover on the possibility of distributed and fractionated spacecraft, and how incremental deployment can gradually improve a system over time. Finally, considerations on the selection of which and how many designs can be launched at a time would offer valuable insights to achieve the highest possible mission return given financial constraints.
+%\vspace{3em}
+
+
+%\newpage
+
+\AtNextBibliography{\footnotesize}
+\printbibliography
+
+\end{document}
