@@ -1,0 +1,189 @@
+\documentclass[]{iac}
+% To make the list of abbreviations and symbols. 
+\usepackage[acronym]{glossaries}
+\usepackage{hyperref}
+\usepackage[citestyle=authoryear,bibstyle=authortitle,maxbibnames=1,maxcitenames=1]{biblatex}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{enumitem}
+\makeglossaries
+\include{abbreviations}
+
+
+\newcommand\myshade{85}
+\colorlet{mylinkcolor}{violet}
+\colorlet{mycitecolor}{Turquoise}
+\colorlet{myurlcolor}{Blue}
+
+\hypersetup{
+  linkcolor  = mylinkcolor!\myshade!black,
+  citecolor  = mycitecolor!\myshade!black,
+  urlcolor   = myurlcolor!\myshade!black,
+  colorlinks = true,
+}
+
+\DeclareMathOperator{\E}{E}
+\DeclareMathOperator{\prob}{p}
+\DeclareMathOperator{\tr}{tr}
+
+\newcommand{\etalia}{\textit{et al.}}
+\newcommand*{\vectornorm}[1]{\left\|#1\right\|}
+\newcommand*\rfrac[2]{{{}^{#1}\!/_{#2}}} % running fraction with slash - requires math mode.
+\newcommand*\T{\mathsf{T}}
+
+\addbibresource{references.bib}
+
+\begin{document}
+
+\IACpaperyear{22}
+\IACpapernumber{D1,IPB,15,x71812}
+\IACconference{73}
+\IAClocation{Paris, France, 18-22 September 2022}
+\IACcopyrightA{2022}{International Astronautical Federation (IAF)}
+
+\title{Agile-Systems Engineering for sub-CubeSat scale spacecraft}
+
+\IACauthor{Konstantinos~Kanavouras}{Affiliation, Country, email address}
+\IACauthor{Andreas~Hein}{Affiliation, Country, email address}
+\IACauthor{Maanasa~Sachidanand}{Affiliation, Country, email address}
+
+\abstract{Space systems miniaturization has been increasingly popular for the past decades, with over 1600
+CubeSats and 300 sub-CubeSat sized spacecraft estimated to have been launched since 1998. This trend
+towards decreasing size enables the execution of unprecedented missions in terms of quantity, cost and
+development time, allowing for massively distributed satellite networks, and rapid prototyping of space
+equipment. Pocket-sized spacecraft can be designed from scratch in less than a year and can reach weights
+of less than 10g, taking away the considerable costs and requirements typically associated with orbital
+flight. However, while Systems Engineering methodologies have been proposed for missions down to
+CubeSat size, there is still a gap regarding design approaches for picosatellites and smaller spacecraft,
+which can exploit their potential for iterative and accelerated development. In this paper, we propose a
+Systems Engineering methodology that abstains from the classic waterfall-like approach in favor of agile
+practices, focusing on available capabilities, delivery of features and design ”sprints”. This methodology
+originates from the software engineering discipline and shifts away from the typical system-subsystem-
+component model, suggesting instead to specify desired capabilities which are directly linked to one or
+more components. To account for the decrease in reliability due to the more ”relaxed” nature of this
+approach, we also explore the degree of reliability and value added by simultaneously launching identical
+designs, different designs, or a combination of both. This methodology allows quick adaptation to imposed
+constraints, changes to requirements and unexpected events (e.g. chip shortages or delays), by making
+the design flexible to well-defined modifications. 2 femtosatellite missions, currently under development
+and due to be launched in 2023, are used as case studies for our approach, showing how miniature
+spacecraft can be designed, developed and qualified from scratch in 6 months or less. Both missions
+involve the attachment of a chip-sized satellite (“ChipSat”) into a larger spacecraft, either relying on
+their host for communications and power or being completely independent. The proposed methodology
+has applications in Earth orbits and beyond, bringing well-established design practices into the domain of
+aerospace engineering and providing a well-structured approach to the creation of small-sized spacecraft,
+which benefits from quick integration of past lessons learned with new technologies.}
+\IACkeywords{maximum 6 keywords}{}{}{}{}{}
+
+\maketitle
+% Add list of symbols 
+\printglossary[type=\acronymtype, title=Abbreviations]
+\printglossary[title=Nomenclature]
+
+\newpage
+.
+
+\pagebreak[4]
+\newpage
+
+\setlist[itemize]{leftmargin=*}
+
+\section{Introduction}
+    \begin{enumerate}
+        \item ChipSat spacecraft
+        \begin{itemize}
+            \item An introduction to CubeSats and smaller spacecraft \autocite{hein_attosats_2019}
+            \item Survey/review of any new missions/updates since 2019? \autocite{adams_theory_2020}
+        \end{itemize}
+        \item Systems Engineering for Space
+        \begin{itemize}
+            \item Reference to traditional approaches \autocite{shea_nasa_2017, ecss_ecss-e-st-10c_nodate}
+            \item Reference to deviations to traditional approaches in experimental projects/startups/education (???)
+        \end{itemize}
+        \item Agile Systems Engineering approaches
+        \begin{itemize}
+            \item What is agile systems engineering, how it has been used \autocite{douglass_agile_2015, haberfellner_agile_2005}
+            \item "Agile" Systems Engineering applied to CubeSats (citations)
+        \end{itemize}
+        \item Contribution of this paper
+        \begin{itemize}
+            \item An agile systems engineering framework for ChipSats
+            \item Taking advantage of specific ChipSat capabilities \autocite{hein_attosats_2019}
+        \end{itemize}
+    \end{enumerate}
+\section{Method}
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\item
+  Concepts directly applicable from \cite{douglass_agile_2015}
+
+  \begin{itemize}
+  \item
+    Ideas from Agile Manifesto \& principles
+  \item
+    Work $\to$ separable into parts and iterations
+  \item
+    Verify quality of work at end of each iteration (Test-Driven
+    Development). Integrate continuously (instead of developing separate
+    parts)
+  \item
+    Project Management: Dynamic planning, project risk reduction
+  \end{itemize}
+\item
+  Use MBSE but with care
+
+  \begin{itemize}
+  \item
+    Example: Behavior-driven development
+  \item Automated generation of software based on models \autocite{perrotin_taste_2012,bychkov_using_2018}
+%  \item
+%    Try to find examples of misuse of MBSE (???)
+  \end{itemize}
+\item
+  Technology reuse, but with care
+\item
+  Launching multiple spacecraft \autocite{hein_attosats_2019, adams_r-selected_2019}
+
+  \begin{itemize}
+  \item
+    Selecting the ideal number N of spacecraft for better reliability. Maximisation of cost/success probability ratio
+
+  \end{itemize}
+\end{enumerate}
+\section{Case Studies}
+	\subsection{AI4Space}
+ \begin{itemize}
+\item Project/Interface/Payload description (Maanasa)
+\item Systems Engineering
+\begin{itemize}
+    \item  Functioning/Shippable system from day N
+    \item Multiple iterations/rewrites
+    \item Test-Driven Development
+    \item Use of MBSE (e.g. Python Construct)
+    \item Continuous Integration
+    \item Technology reuse
+    \item Lessons-learned resuse
+    \item Project Management
+\end{itemize}
+ \end{itemize}
+			
+	\subsection{ChipSat}
+ \begin{itemize}
+		\item Not sure how much we can include here, since we're still in early stages. Maybe make plans on the next steps?
+		\item Functionality split into 3 spacecraft
+		%\item Probability of mission success calculations
+  \end{itemize}
+\section{Discussion}
+\begin{enumerate}
+    \item Lessons Learned, Advantages observed
+    \item Future Steps
+\end{enumerate}
+\section{Conclusion}
+
+\vspace{3em}
+
+\section*{Acknowledgements}
+%- Check if need to acknowledge uni.lu HPC
+
+\newpage
+\printbibliography
+
+\end{document}

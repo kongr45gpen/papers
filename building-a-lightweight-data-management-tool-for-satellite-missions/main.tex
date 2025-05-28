@@ -1,0 +1,575 @@
+\documentclass[]{iac}
+% To make the list of abbreviations and symbols. 
+%\usepackage[acronym]{glossaries}
+\usepackage{hyperref}
+\usepackage[citestyle=numeric,bibstyle=numeric,maxbibnames=1,maxcitenames=1,sorting=none,sortcites]{biblatex}
+\usepackage[dvipsnames]{xcolor}
+\usepackage[inline]{enumitem}
+\usepackage{siunitx}
+%\usepackage[nameinlink]{cleveref}
+\usepackage{tabularx}
+\usepackage{supertabular}
+\usepackage{acro}
+\usepackage{minted}
+\usepackage{cleveref}
+%\usepackage[british]{babel}
+%\usepackage{xcolor-material}
+%\usepackage{soul}
+
+%\usepackage{microtype}  %TODO!!!
+
+%\makeglossaries
+\include{abbreviations}
+
+
+\sisetup{range-units = single,print-unity-mantissa=false}
+
+\setlength{\marginparwidth}{2cm}
+%\usepackage[colorinlistoftodos,disable,textsize=small]{todonotes}
+%\setuptodonotes{inline,inlinepar,inlinewidth=5cm}
+
+\usepackage[many]{tcolorbox}
+\newtcbox{\todo}{
+    on line,
+    colback=red!5!white,
+    colframe=red!75!black,
+    coltitle=red!75!black,
+    fonttitle=\bfseries,
+    fontupper=\footnotesize,
+    title=TODO,
+    detach title,
+    before upper={\tcbtitle\ },
+    nobeforeafter,
+    tcbox raise base,
+    top=0pt,bottom=0pt,left=0mm,right=0mm,
+    toprule=0mm,
+    bottomrule=0mm,boxsep=0.7mm,
+}
+
+\def\todo#1{}
+
+% Print DOI and NOT URL
+\DeclareSourcemap{
+  \maps[datatype=bibtex]{
+    \map[overwrite]{
+      \step[fieldsource=doi, final]
+      \step[fieldset=url, null]
+      \step[fieldset=eprint, null]
+    }  
+  }
+}
+
+
+
+% Hide some URLs and put them in the title
+\ExecuteBibliographyOptions{url=false}
+\newbibmacro{string+url}[1]{%
+    \iffieldundef{url}{#1}{\href{\thefield{url}}{#1}}
+}
+\DeclareFieldFormat{title}{\usebibmacro{string+url}{\mkbibemph{#1}}}
+\DeclareFieldFormat[article]{title}{\usebibmacro{string+url}{\mkbibquote{#1}}}
+\DeclareFieldFormat[inproceedings]{title}{\usebibmacro{string+url}{\mkbibquote{#1}}}
+\DeclareFieldFormat[thesis]{title}{\usebibmacro{string+url}{\mkbibquote{#1}}}
+
+\newcommand\myshade{85}
+\colorlet{mylinkcolor}{violet}
+\colorlet{mycitecolor}{Turquoise}
+\colorlet{myurlcolor}{Blue}
+
+\hypersetup{
+  linkcolor  = mylinkcolor!\myshade!black,
+  citecolor  = mycitecolor!\myshade!black,
+  urlcolor   = myurlcolor!\myshade!black,
+  colorlinks = true,
+}
+
+\DeclareMathOperator{\E}{E}
+\DeclareMathOperator{\prob}{p}
+\DeclareMathOperator{\tr}{tr}
+
+\newcommand{\etalia}{\textit{et al.}}
+\newcommand*{\vectornorm}[1]{\left\|#1\right\|}
+\newcommand*\rfrac[2]{{{}^{#1}\!/_{#2}}} % running fraction with slash - requires math mode.
+\newcommand*\T{\mathsf{T}}
+
+\usepackage{array}
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+
+\addbibresource{chipsats.bib}
+
+\setlist{leftmargin=0.8cm}
+
+\begin{document}
+
+\lhead{}
+\chead{\footnotesize 75\textsuperscript{th} International Astronautical Congress (IAC), Milan, Italy, 14-18 October 2024.\\ Copyright \copyright 2024 by Mr. Konstantinos Kanavouras. Published by the IAF, with permission and released to the IAF to publish in all forms.}
+\rhead{}
+
+\makeatletter
+\lfoot{IAC--\iac@paperyear--\iac@papernumber}\cfoot{}\rfoot{Page \thepage\ of \pageref{LastPage}}%
+\makeatother
+
+\IACpaperyear{24}
+\IACpapernumber{D1,6,10,x89104}
+\IACconference{75}
+\IAClocation{Milan, Italy, 14-18 October 2024}
+\IACcopyrightB{2024}{International Astronautical Federation (IAF)}
+
+\title{Building a Lightweight Data Management Tool for Small Satellite Missions}
+
+\IACauthor{Konstantinos~Kanavouras}{\url{konstantinos.kanavouras@uni.lu}}{1}
+\IACauthor{Alexander Bühler}{\url{alexander.buehler@uni.lu}}{1}
+\IACauthor{Andreas~M.~Hein}{\url{andreas.hein@uni.lu}}{1}
+
+\abstract{Model-Based Systems Engineering (MBSE) has received widespread adoption in the space industry, allowing engineers to develop, design and validate their activities through formal models. MBSE’s
+perceived benefits include enhanced communication, complexity management, knowledge transfer, and
+improved verification capabilities through traceability. However, generic or tailored MBSE tools have
+not yet found such widespread adoption in small satellite missions, such as CubeSats. Drawing from a
+review of previous and current missions, we postulate that many MBSE tools and processes add a considerable overhead in terms of time, cost and effort to establish and maintain models. On the other hand,
+Document-Based Systems Engineering, often used on such projects, may suffer from inconsistency, lack
+of detail, and difficulty in accessing reliable and up-to-date engineering data. In this paper, we propose
+a concept and design for a new software tool for small spacecraft engineering, focused on engineering
+parameter management and sharing. This design is based on modern design and user experience principles, with a basic requirement of allowing users to access any engineering parameter within 20 seconds of
+having access to a web browser. The tool uses a standard block-based structure to describe the hierarchy
+of a space system, with modifiable parameters and content assigned to each block. This structure is
+stored under a version-controlled database (such as git or dolt), allowing history tracking, merging, auditing and real-time collaboration. Ready-made templates can also be used to produce aggregate values,
+such as mass or cost budgets. A REST API allows integration with different external tools, such as MS
+Excel Power Query, and an integration with an AI-based copilot is envisioned. To complement the design
+concept of our tool, we additionally provide User Interface mockups of key actions, as well as an early
+functional proof-of-concept developed with a Python backend. We use data from the POQUITO mission
+from the University of Luxembourg to emulate a use case in our proof-of-concept. This implementation
+is also released as free software to allow future users to modify and extend our tool. We conclude with a
+roadmap for the potential future development of the tool, with an aim of improving the engineering data
+management workflow for small satellite missions and surpass the limits of document-based information
+tracking, without the added burden of industrial modelling processes.}
+%\IACkeywords{systems engineering}{femtosatellites}{attosatellites}{chipsat}{agile}{scrum}
+
+%%
+%%
+%%
+%%
+%%
+%%
+%% AS YOU CAN SEE, I HAVE MADE GREAT PROGRESS IN THIS GREAT PAPER
+%%
+%%
+%%
+%%
+%%
+%%
+%%
+%%
+%%
+
+
+
+\maketitle
+% Add list of symbols 
+%\printglossary[type=\acronymtype, title=Abbreviations]
+%\printglossary[title=Nomenclature]
+
+%\acuseall
+\printacronyms[template=supertabular]
+~
+\\~
+\par
+\vfill\null
+\columnbreak
+
+%\newpage
+%\hspace{0pt}
+
+%\pagebreak[4]
+%\newpage
+
+\begin{comment}
+\section{Executive Summary}
+We, the people, are making a lot of satellites. Some are big but most of them are small (e.g. CubeSats, PocketQubes, ChipSats and the like).
+These satellites have a lot of systems engineering done into them. Usually a satellite has like thousands of compoentns which have different parameters and interfaces between them.
+Now, these parameters need to be certainly kept track of. Various things happen to them: 1. They change often, 2. They may be incorrect, 3. We want to read them and be sure they are OK.
+Also, there is never a single satellite design, each design is different and is implemented in a different way.
+So, uhm, what we do is that we take those parameters and usually what people would do in the past is that they would just write them down somewhere (a whiteboard or sth), but now it's a bit fancier - electronic (shared) documents, or Excel spreadsheets.
+Now people saw this and they saw it as inefficient; a spreadsheet is essentially a big box of numbers and text, and documents are hard to search. So they found new more efficient ways to store the technical of the system, which is the following:
+MBSE, OCDT, and Valispace.
+However, the above methods are terrible. The reason is that they are either very expensive, in terms of time or cost, or especially for small projects like a cubesat they take up so much time and require training and usually the harm caused by implementation (or usually mis-implementation) of such tools is higher than the harm of ad-hoc naive information sharing between people, or good old keeping track of things in your mind. So all in all, these tools suck.
+However, it's 2024. There must be a better way!
+This is where we come in. We aim to combine the modern startup environment of using Next.js for pretty much everything (I'm gonna use nuxt instead of next because react sucks) with scripting languages and nerdy aerospace systems engineering.
+The result will be a tool the likes of which no one has ever seen the likes of which, with some cool features which are listed in my private obsidian notes. The intention is to do some more things from the notes.
+This paper will not present a tool; it's not an advertisement, and also the tool is not ready. However we will evaluate some cool concepts that nobody had the idea of thinking because they're too absorbed designing propellantless propulsion, as mockups, so that we can pretend we are UX/HCI researchers.
+The paper is then structured with the following sections. I hope you have fun.
+\end{comment}
+
+
+\section{Introduction and Background}
+One of the main disciplines of Systems Enginering is Configuration Management. As defined in the NASA Systems Engineering Handbook \autocite{shea_nasa_2020}, ``[Configuration Management] enables all stakeholders in the technical effort, at any given time in the life of a product, to use identical data for development activities and decision-making''.
+
+Configuration and Technical Data Management may refer to spacecraft data managed during the entire lifetime of a space project. This data is usually refined or updated from one phase to the next, while engineers might event need to consider alternative options for the product.
+
+Technical data of a spacecraft may include product trees, equipment specifications, numerical values, emulation models, interfaces and more. \todo{todo} \todo{This work focuses on numerical values}
+
+Spacecraft configuration data may come in the type of ``strings'' (text), numbers, hierarchies (e.g.~for a product tree), tables and more. (e.g.~for a failure mode analysis). \begin{figure*}[h]
+    \centering
+    \includegraphics[width=.7\linewidth]{media/ocdt_dist_wv_2.png}
+    \caption{Example parameters of a spacecraft component \autocite{DDJF_OBDH}} %\autocite{acubesat}}
+    \label{fig:ocdt_webview_example}
+\end{figure*}
+% Things not mentioned
+% Arrays
+
+Information about spacecraft configuration can range from between a few spreadsheets to thousands of pages of text-based documentation, depending on the size and complexity of the project. What we call ``Engineering Data'' may be combined with project documentation, or be stored in an independent format, in a structured manner or a domain-specific model.
+\citeauthor{kanavouras_agile_2024} \autocite{kanavouras_agile_2024} separate spacecraft documentation into two types:
+\begin{itemize}
+    \item Text-based documentation, where text is written, usually in a rich-text format, and stored in a central repository or printed. Content is usually edited using a specific format, such as Office Open XML (used by Microsoft Word) or Markdown (used by online software).
+
+    \item Model-based documentation, where system parameters and technical data are stored in a structured format or language, specifically designed to allow description of the system.
+\end{itemize}
+
+As space projects usually involve collaboration between multiple teams and stakeholders, technical data must also be shareable between participants. This %\todo{sharing must be such that}
+must be done so that engineering data is kept up-to-date across team members, with additional approval or authorisation pipelines when required. The process of sharing happens in one of the following ways:
+\begin{itemize}
+    \item Manual file sharing, usually through e-mail or a filesharing service
+    \item Tool-specific collaboration tools, such as those offered by Microsoft Sharepoint, Google Workspace, or wikis. This might include real-time change tracking.
+    \item An independent version control system with difference and author tracking
+\end{itemize}
+
+
+Specifically for small space missions, such as CubeSat, methods with less overhead are typically used. \todo{These methods include but are not limited to:}
+\autocite{honore-livermore_integrating_2022}
+In fact, \citeauthor{honore-livermore_integrating_2022} \autocite{honore-livermore_integrating_2022} specifically identified the need to develop improved information systems for documentation and data management, specifically for CubeSat missions.
+
+CubeSat missions specifically have employed both document-based and model-based documentation \autocite{coyle_eecsat_2020,czech_first-move_nodate,slavinskis_estcube-1_2015}.
+
+A noteworthy platform for document-based documentation are spreadsheets, which allow representing information in a semi-structured format, without imposing a specific arrangement on users. Spreadsheets also typically allow a range of calculations to be performed in-application, making them convenient as a centralised source of automatically updated data and results.
+
+Given the major time and effort required for project documentation (\citeauthor{sanchez-rosado_assessing_2009} \autocite{sanchez-rosado_assessing_2009} estimated that estimated that 12\% to 35\% of a software
+project’s development time is spent on documentation), its criticality in space projects, and the wide variety of different tools available for this purpose, it is essential to investigate ways of improving documentation effectiveness, speed and correctness for space projects. \citeauthor{ambler_strategies_2008} \autocite{ambler_strategies_2008} proposed the following formula to measure documentation effectiveness:
+\begin{equation}
+\text{Potential value} = \text{Produced value} \cdot C \cdot R \cdot U \cdot F \cdot T
+\end{equation}
+where:
+\begin{itemize}[itemsep=-1ex]
+    \item Produced value is guesstimated by the producers of the artifact.
+    \item \(C\) is the percentage of the artifact that is currently “correct”.
+    \item \(R\) = The chance that the artifact will be read by the intended audience.
+    \item \(U\) = The chance that the document that is actually understood by the intended audience.
+    \item \(F\) = The chance that the advice contained in artifact will be followed.
+    \item \(T\) = The chance that the advice will be trusted.
+\end{itemize}
+Different project classes combined with inappropriate documentation or \ac{EDM} tools can lead to significant inefficiencies in one of the above factors, for example:
+\begin{itemize}
+    \item Academic/educational missions using formal \acs{MBSE} tools may not have the personnel or capacity to keep engineering data up-to-date, reducing the \(C\) and \(T\) parameters.
+    \item Academic/educational missions using a non-structured way of storing engineering data may reduce the parameter \(R\) and the \emph{produced value} of the documentation, as useful information is usually stored in unstructured folders and documents without central control, making data retrieval difficult, unreliable and slow.
+    \item Small industrial missions may avoid the generation of documentation altogether, reducing the \emph{produced value} of documentation.
+\end{itemize}
+
+While \acf{MBSE} is generally perceived to increase documentation consistency and verification \& validation verifiability \autocite{campo_model-based_2023,henderson_value_2021}, users have associated increased complexity and worse understandability with it \autocite{campo_model-based_2023}.
+
+\ac{MBSE} users also report mixed conclusions connected to the results on development time, cost and effort \autocite{campo_model-based_2023}. This discrepancy can be explained as the overhead of implementing a new, often unknown management methodology, outweighs the potential gains, especially in smaller projects. For each system or team, there exists an ideal trade-off between \ac{SE} effort and \ac{SE} benefit that optimises parameters such as development time \autocite{boehm_roi_2008}.
+
+In smaller space projects, such as CubeSat missions, the overhead added by \acs{MBSE} methods is more evident, as teams prefer to work in a more agile fashion, favouring high responsiveness to change and rapid information sharing. In this case, tool selection can play an equally important role as methodology selection \autocite{honore-livermore_managing_2021}.
+
+\subsection{Available MBSE platforms}
+\acs{MBSE} tools for configuration and technical data management can be separated into two categories: \autocite{kanavouras_agile_2024}:
+\begin{itemize}
+\item \textbf{Informal}, where only limited parts of a system may be modelled based on an opinionated structure defined by a tool or process. Examples include Starion Group's COMET (formerly associated with RHEA Group's CDP4 and ESA's OCDT), Valispace, Duro PDM One, ISAE Supaero's Nanospace \autocite{gateau_open-source_2021} and more.
+
+\item \textbf{Formal}.
+
+Formal \acs{MBSE} methods are typically tied to the tools they use. Examples include ARCADIA/Capella \autocite{roques_mbse_2016}, Papyrus, Rhapsody, CATIA, Enterprise Architect and more \autocite{campo_model-based_2023}.
+
+\end{itemize}
+
+Developers can also choose to implement a formal or informal model-based ecosystem by manually adapting generic, commercially available tools or \acf{ERP} systems, such as Microsoft Sharepoint, Eclipse, Odoo or others. This approach trades a significant deployment and maintenance effort for slightly more flexibility on the model structure.
+
+\par{}
+
+Based on the above, we claim that the development of a novel \acf{EDM} tool, combined with a suitable data management process, can significantly reduce the organisational overhead of \acs{EDM} for small satellite missions (focused on CubeSats). We will therefore present requirements, concepts and mockups for a new software tool, used to manage engineering parameters of a hierarchical space system
+
+The rest of this work is structured as follows: In \Cref{sec:requirements}, we present the basic requirements and justification that differentiate our tool from the state of the art. In \Cref{sec:prototype}, we present the functionality and mock-ups of our tool. Finally, \Cref{sec:conclusion} shows the next steps in the tool's development.
+It is important to clarify that this work does not introduce a new software tool itself, but rather the concept of one, following a typicall \ac{UI} design workflow, with our aim being to guide software development for future tools. %\todo{cite typicall UX research}
+
+
+\section{Requirements}
+\label{sec:requirements}
+For the development of a prototype concept for engineering data management, we consider the following requirements and their rationale:
+\begin{itemize}[itemsep=6pt]
+    \item \textbf{RQ-1}: \emph{The tool shall represent a spacecraft in a hierarchical tree-like structure of multiple entities containing multiple parameters each.}
+
+    This generic requirement defines the core functionality of our tool: To store spacecraft engineering data in a hierarchical format. A tree-like structure is indeed a common method of representing a product and its details, which is already common in most \ac{EDM} tools. It also allows extending functionality beyond what is offered by a grid-like data representation, as used in a spreadsheet.
+
+    Product tree structures are usually asked to represent different types of repetition or instantiation inside a product. For example, a type of fastener, electrical connector or integrated circuit may be shared across different subsystems and assemblies. While we don't specify explicitly how to handle these cases as a requirement, we note that many \ac{MBSE} tools clearly differentiate between an ``element template'' and an ``element instance'' which can be repeated. However, we do note that most elements of a small spacecraft are rarely duplicated; therefore the process of instantiating an element should not require duplicate effort to create and store a template representation for it.
+
+    \item \textbf{RQ-2}: \emph{The complete functionality of the tool shall be accessible from the web.}
+
+    In essence, any device with a web browser should be able to read, edit and manage engineering data with no restrictions. This ensures that access is not limited by technical or hardware limitations, and that engineers have quick access to data through their computer, a mobile device when in the field, or even embedded systems.
+
+    Accessibility should ideally be extended to formats beyond personal devices as well; this includes paper printouts (for use during laboratory work), digital signage and more.
+
+    \item \textbf{RQ-3}: \emph{Stored data shall be version controlled.}
+
+    On a rapidly-changing or short-duration project, it is essential that all changes are traceable in terms of people, time and reason \todo{}. 
+
+    \item \textbf{RQ-4}: \emph{Each action shall be easily accessible.}
+
+    This requirement follows a heuristic known as the ``three-click rule'', suggesting that no function or page on a User Interface should take more than 3 clicks to access \autocite{glassey_proximity_2005}. While this is not a hard rule or requirement\todo{}, it can still provide a ballpark on how to simplify user interaction.
+
+    Ideally, the common example of creating or updating a parameter through such a tool will be no harder than responding to an inquiry about this parameter on an online communication platform. As a performance criterion, we can specify that \emph{users should be allowed to access any engineering parameter within 20 seconds of having access to a web browser}.
+
+    \item \textbf{RQ-5}: \emph{The tool shall provide an \acf{API}.}
+
+    Space Engineering often involves the combination of multiple pieces of software. Therefore, a solution hosting engineering data should offer a method of fetching and updating this data programmatically.
+
+    This will also allow engineers to create integrations and automations that can update engineering values based on other values. \todo{}
+
+    Such an \acs{API} will have to be properly documented in order to reasonably reduce the overhead added by such implementations.
+
+    \item \textbf{RQ-6}: \emph{The tool shall be extensible by code.}
+
+    Informal \acs{MBSE} platforms often have limited flexibility/modularity as a result of \todo{having} an opinionated layout or limited feature set. On the other hand, formal \acs{MBSE} platforms provide a much larger \todo{margin of creativity/blanker slate}.  This expects users to implement the structure of their model themselves, and format it as they see fit.
+
+    As an example, an informal \acs{MBSE} platform may already have a \emph{position} parameter defined for components, which includes 3 integers (for each axis) and can be state dependent (e.g.~stowed/deployed). In a formal \acs{MBSE} platform, the use will have to create the position parameter and associate it with a product, including the appropriate representation for each axis and state. On the other hand, an informal \acs{MBSE} platform may have no way to attach an interface link or an image file to a component.
+
+    A \todo{middle-ground} solution would be to implement an opinionated system that is built from the ground-up to allow extensibility. An efficient method to facilitate this extensibility would be an embedded scripting language, such as Lua \todo{or the other language I recently starred}. If a Turing-complete language is combined with the appropriate storage and visualisation procedures, the user would then have a \todo{theoretically infinite canvas}.
+
+    The choice of language(s) that are officially supported for extensibility also plays an important role. A language that is inherently simple, or that many spacecraft engineers are familiar with, is more likely to get used compared to alternatives.
+
+    In any case, extensibility should be provided, within a reasonable degree, to a large number of aspects on such a tool. For example, by including a multi-line ``Justification'' or ``Notes'' field for parameter or entity, users can describe complex concepts that would need to be modelled independently if not represented with prose. For example, users might need to specify uncertainties in data sources, descriptive parameters (such as colour), rationale for the selected value, acceptable limits and more.
+
+    \item \textbf{RQ-7}: \emph{The tool shall notify users on changes.}
+
+    Introducing a new tool to a development environment has the risk of exacerbating tool fatigue \todo{find a reference that explains what tool fatigue even is or if such a thing exists}. Especially when users are asked to switch between different platforms, it may be difficult to maintain awareness of changes at the right time.
+
+    As engineering teams typically focus around a software communication platform (such as E-Mails, Slack or Github) to share information \autocite{honore-livermore_managing_2021,retselis_adaptation_2022}, it logically follows that a tool should have the capability of announcing draft or released changes in real-time on that platform. This feature can also encourage additional synergies, by allowing users to discuss or dispute changes in Engineering Data in context.
+
+    \item \textbf{RQ-8}: \emph{The tool shall be available as Free and Open Source software with a focus on Developer Experience.}
+
+    While the choice of making technology available as open-source depends on the team and stakeholders of this project, we believe that a \acs{FOSS} tool would \todo{present} higher value to its users.% The ability to tweak the functionality and \todo{... no ideas...}
+
+    The discussion of Developer Experience has to inadvertently focus on software development trends in the industry. For example, while an interpreted language (such as Python) is usually regarded as less performant than a compiled language (such as C++), it is more likely that engineering graduates are familiar with the former \todo{citation}, which in turn increases the chances that they will interact with the codebase and be familiar with any errors caused.
+
+    
+\end{itemize}
+
+\subsubsection{Non-Requirements}
+While we intend for our concept to be usable as a centre for small spacecraft development, its functionality has to be limited in this area. To this end, we feel important to clarify features \emph{not} targeted by our proposal:
+\begin{itemize}
+    \item \emph{Analysis and emulation}. Analysis is often performed by domain-specific tools which handle the numerous complexities associated with \todo{simulations}. 
+    \item \emph{Requirement management and validation}.
+    While requirements solicitation, processing and realisability checking has already been demonstrated in low-overhead tooling \autocite{katis_capture_2022}, we prefer to keep it outside our proposed solution for an early demonstration. Space mission requirements tend to be complex and usually not unambiguously specified, making manual verification efforts overshadow many automatic works \todo{which are cool but beyond the scope of this paper}.
+
+    \item \emph{Test management} and \emph{Risk/failure management}, on the grounds of being out-of-scope.
+    %\item Risk/failure management\todo{Why? maybe => anything that is not engineering data on a tangible device}
+\end{itemize}
+
+
+
+
+
+%\section{Background}
+
+\section{Prototype}
+\label{sec:prototype}
+
+Following a typical \acs{UI} prototyping flow, we created a set of mockups of our front-end interface, showing its main features (\Cref{fig:m1,fig:m2,fig:m3,fig:m4}). The primary tool used for this purpose was Moqups (\url{https://moqups.com}).
+
+\begin{figure*}[h]
+    \centering
+    \includegraphics[width=.7\textwidth]{media/mockup_1.png}
+    \caption{Entity view mockup}
+    \label{fig:m1}
+\end{figure*}
+
+\begin{figure*}[hp]
+    \centering
+    \includegraphics[width=\textwidth]{media/mockup_2.png}
+    \caption{Parameter view mockup}
+    \label{fig:m2}
+\end{figure*}
+
+\begin{figure*}[hp]
+    \centering
+    \includegraphics[width=\textwidth]{media/mockup_3.png}
+    \caption{Script-based parameter mockup}
+    \label{fig:m3}
+\end{figure*}
+
+\begin{figure*}[h]
+    \centering
+    \includegraphics[width=\textwidth]{media/mockup_4.png}
+    \caption{Time-variable parameter mockup}
+    \label{fig:m4}
+\end{figure*}
+
+We furthermore developed a proof-of-concept frontend using Nuxt.js to demonstrate the applicability of a web interface for our tool, as shown in \Cref{fig:nuxt}.
+\begin{figure*}[h]
+    \centering
+    \includegraphics[width=\textwidth]{media/platform.png}
+    \caption{Example front-end implementation using Nuxt.js}
+    \label{fig:nuxt}
+\end{figure*}
+
+
+
+\subsection{Requirements Compliance}
+In the following section we will investigate the applicability of the aforementioned requirements to our tool:
+\begin{itemize}[itemsep=6pt]
+    \item \textbf{RQ-1}: \emph{The tool shall represent a spacecraft in a hierarchical tree-like structure of multiple entities containing multiple parameters each.}
+
+    The hierarchy shown in \Cref{fig:m1} represents a typical product tree of a satellite, showing a high-level view of subsystems that can be expanded into their child components. Note that abstract subsystems can be represented as well, such as software or trajectories. The latter example can indicatively cover values such as altitude, inclination and other trajectory parameters that are commonly requested but also frequently updated in missions.
+
+    Each ``entity'' can therefore represent a subsystem, an assembly, or any other product within a satellite.
+    Some additional opinionated attributes are optionally available for each entity:
+    \begin{itemize}[itemsep=0pt]
+        \item Product Name
+        \item Image
+        \item Links (to datasheets, engineering files, user manuals or others)
+        \item Notes (to provide information not representable by parameters)
+    \end{itemize}
+
+    Each entity can be associated with many parameters of different types, as described in \Cref{sec:parameters}.
+
+    \item \textbf{RQ-2}: \emph{The complete functionality of the tool shall be accessible from the web.}
+
+    Our prototype tool is designed with a web-first view, able to run on a local server or the cloud.  We have developed a prototype front-end using Nuxt.js and Tailwind CSS, as shown in \Cref{fig:nuxt}, which has no requirements from the user's side apart from a web server, and is therefore usable by desktop and handheld devices.
+
+    \item \textbf{RQ-3}: \emph{Stored data shall be version controlled.}
+
+    Version control of data can be performed by either:
+    \begin{itemize}[itemsep=0pt]
+        \item Using a plain database and implementing versioning features on it (such as MySQL or MongoDB)
+        \item Using a plain \ac{VCS} and implementing data storage features (such as Git or SVN)
+        \item Using a tailored solution for versioned data storage (such as DVC or Dolt)
+    \end{itemize}
+
+    While any of the above solutions will be suitable, the ideal one would combine low overhead with data storage in a human-readable format, so that project models can easily be inspected or transferred in their raw form.
+
+    Our proposed solution is to use the Git \ac{VCS}, by representing each entity as a YAML file \autocite{noauthor_yaml_nodate}. Git has been chosen thanks to its wide support, with advanced change management tools available. YAML files were chosen because they are human and machine-readable and editable, with a flexible structure and low processing overhead. By default, they also represent values on different lines, which is compatible with most Git difference viewers. A user could then also theoretically create a spacecraft model entirely by hand, by creating the appropriate YAML files, with no tool interaction required.
+
+    \item \textbf{RQ-4}: \emph{Each action shall be easily accessible.}
+
+    A few design principles can be devised to maintain quick access to most interface elements. While these are
+    hard to implement for small-screen (mobile) devices, they can be reasonably achieved on desktop screens, which
+    are our main focus:
+    \begin{itemize}
+        \item All actions on the current context should be visible on the screen.
+
+        This principle discourages the excessive use of information-hiding components, such as tab groups or accordions, which may hide critical functionality from the user.
+
+        \item All entities and parameters should be accessible via search.
+
+        A fuzzy, interactive search box should be the main focus of the tool landing page. This search should allow users to locate parameters to preview or edit at will. For example, by searching \emph{``ant band''} a user can have immediate access to the \emph{Antenna Bandwidth} parameter. Actions such as creating or editing parameters can also be accessible through search.
+
+        \item Context should be visible.
+
+        Users should have a clear idea of the context of their current selection. As shown in \Cref{fig:m2}, we can achieve this by maintaining ``panels'' of the user's navigation flow. This makes it clear where in
+        the spacecraft hierarchy the user is, and avoids the need for context switch when navigating to another entity, parameter or action.
+    \end{itemize}
+
+    \item \textbf{RQ-5}: \emph{The tool shall provide an \acf{API}.}
+
+    The backend of our prototype tool is envisioned to provide a \ac{REST} \ac{API}, through which the front-end will also receive values, thus guaranteeing functional completeness.
+
+
+    \item \textbf{RQ-6}: \emph{The tool shall be extensible by code.}
+
+    A simple form of extendability is demonstrated in \Cref{fig:m3}, where a simple, interpreted programming language is used to generate dependent parameter values. In the example, it is shown how the \emph{Data Rate} parameter depends on the Antenna \emph{Power} and Ground Station \emph{\acs{RSSI}} parameters through a simple math calculation.
+
+    However, a naive attachment of scripts cannot cover all extensibility use cases, such as integration with external tools (e.g.~CAD or trajectory analysis). While no-code (e.g.~node based), low-code or integrated development options can be integrated within our tool, these often provide an additional degree of complexity with questionable usability.
+
+    A proposed solution would be to allow for easy integration of our back-end with external software suites through the use of a simple \ac{API}, as described in \textbf{RQ-5}. For example, a \acs{REST} query to update a parameter could look as follows:
+    \begin{verbatim}
+PUT https://spardata.company.com/api/spacecraft
+           /transceiver/data_rate
+
+{"value": 512, "unit": "kbps"}
+\end{verbatim}
+
+    Such an integration would also be natively compatible with Microsoft Excel through Web Data Queries, which allow reading and keeping data up-to-date through a simple \ac{UI}. However, we note that Excel does not allow saving/updating online data through its interface only.
+
+    Back-end frameworks, such as Python's Django, also provide significant built-in extensibility capabilities through plugins that can be made by users, in the native programming language of the tool.
+
+    \item \textbf{RQ-7}: \emph{The tool shall notify users on changes.}
+
+    While webhook-based integrations for systems like Microsoft Teams, Slack or Mattermost are simple to implement, we note that users can also utilise integrations of the chosen \acs{VCS} solution. For example,
+    online Git repositories already offer integrations with most messaging and notification tools. This solution can be especially convenient for teams that already have a software development workflow set up.
+
+    %\item \textbf{RQ-8}: \emph{The tool shall be available as Free and Open Source software with a focus on Developer Experience.}
+
+    %While the choice of making technology available as open-source depends on the team and stakeholders of this project, we believe that a \acs{FOSS} tool would \todo{present} higher value to its users. The ability to tweak the functionality and \todo{... no ideas...}
+
+%    The discussion of Developer Experience has to inadvertently focus on software development trends in the industry. For example, while an interpreted language (such as Python) is usually regarded as less performant than a compiled language (such as C++), it is more likely that engineering graduates are familiar with the former \todo{citation}, which in turn increases the chances that they will interact with the codebase and be familiar with any errors caused.
+\end{itemize}
+
+
+
+%\section{Case Study}
+
+
+\subsection{Parameter Representation}
+\label{sec:parameters}
+The concept of the ``Parameter'' is at the core of our proposed tool, as it is the main unit of data storage within an entity.
+
+Parameter values are sometimes provided explicitly by developers, having been specified in requirements or extracted through manual calculation. However, parameters may also depend on other parameters or be the results of automated analysis by another tool. Our platform should be flexible enough to support different parameter \textbf{sources}, the following of which we have identified:
+\begin{itemize}[itemsep=1ex]
+    \item \textbf{Manual} --- typed by the user on the interface
+    \item \textbf{External} --- imported into the interface by an external tool through an \acs{API}
+    \item \textbf{Calculated} using an expression --- for parameters that depend on other parameters or simple calculations, made through a programming or expression language, such as Lua
+\end{itemize}
+
+As the model representation of a rapidly-evolving system can rarely be absolutely correct, we can provide a method of identifying the confidence of a parameter's correctness. This can be visualised by parameter \textbf{states} which follow a workflow process:
+\begin{itemize}[itemsep=1ex]
+    \item \textbf{Rejected} --- someone has identified that the parameter is incorrect
+    \item \textbf{Pending} --- the parameter value has been updated, but a reviewer needs to approve it
+    \item \textbf{Approved} --- the parameter has been approved and is most likely correct
+    \item \textbf{Expired} --- a specific amount of time has passed since the parameter was last checked; a second look is needed to ensure it is not outdated.
+    \item \textbf{New Data} (only for calculated parameters) --- the dependents of this parameter have been updated, but this one hasn't; it is most likely incorrect.
+\end{itemize}
+
+The main aspect of parameter representation is their \textbf{type}, which can be a:
+\begin{itemize}[itemsep=1ex]
+    \item \textbf{Number} --- a simple floating point number with no limits. Can be associated with a respective unit, using an off-the-shelf unit conversion platform to ensure \acs{API} consistency.
+    \item \textbf{String} --- single or multi-line text. This can be used as a wildcard by users if other parameter types are not suitable.
+    \item \textbf{Enumeration} --- one of many possible values (e.g.~\acs{TRL})
+    \item \textbf{Reference to entity} --- this essentially allows describing interfaces between modules, by modelling ``ManyToOne'' relationships.
+    \item \textbf{Table} --- an arbitrary matrix of descendant parameter types
+    \item \textbf{Function} --- an operator that acts on a parameter value to produce another parameter value based on simple scripts; useful to represent e.g.~efficiency curves.
+\end{itemize}
+
+Finally, we define an additional ``variable'' modifier for parameters, in order to represent numbers which typically change over time, such as power consumption, ground station coverage and others. A time-variable parameter can generate a graph in time of this parameter's trend, and programmatically generate statistics such as
+\mintinline{java}{min()},
+\mintinline{java}{max()},
+\mintinline{java}{mean()},
+\mintinline{java}{time_low()},
+\mintinline{java}{time_high()}, and others. Time-variable parameters can be represented with one of the following ways:
+\begin{itemize}[itemsep=-1ex]
+    \item \textbf{Duty cycle} --- by defining a minimum, maximum, and percentage duty cycle
+    \item \textbf{On/off duration} --- by defining a minimum, maximum, and off/on or off/total duration
+    \item \textbf{Sinusoidal} --- by providing the frequency, phase and amplitude of a sinusoid
+    \item \textbf{Arbitrary graph} --- by linearly interpolating across a periodic set of fixed points provided by the user
+\end{itemize}
+We note that this approach, compared to the defining just two edge values and a duty cycle, allows specifying the exact time durations of each state and can provide more flexibility in calculations. \todo{for example by doing point-based operations and not acting only on the aggregate}
+
+
+To comply with \textbf{RQ-6}, plugins should be able to augment parameters by implementing any more of the above modifiers.
+
+
+\section{Conclusion}
+\label{sec:conclusion}
+
+Through this pleliminary \acl{UI} study, we formulated requirements for a modern Engineering Data Management tool developed for the space industry and focused on small satellite engineering. While the objective of our study was not to present a production-ready concept, we expect that our results will be useful to developers of \acs{MBSE} data management tools, with a focus on the CubeSat (and smaller) ecosystem, for both academic and industrial teams. 
+
+Future work on the tool itself includes the exploration of main features, such as entity templates, parameters dependent on state (e.g.~Nominal mode vs Safe mode), automatic generation of aggregate reports (e.g.~budgets) and well-defined integration and scripting capabilities. The tool also calls for at least targeted use of simple \ac{AI} and/or \acp{LLM}, in parts such as expression generation, parameter guesstimation, image/icon generation, quick search and more. After the conceptual studies, an actual back-end and front-end implementation can commence, along with case studies in real-world usage and comparisons to other tools.
+
+Additional steps beyond software development can include surveying satellite developers regarding their needs and preferences on \acs{EDM}, with a focus on practicality and low overhead, as well as a rigorous investigation of the critical positive and negative aspects of \acs{MBSE} tools \autocite{campo_model-based_2023,henderson_value_2021}.
+
+
+
+
+%\newpage
+
+\AtNextBibliography{\footnotesize}
+\printbibliography
+
+\end{document}
