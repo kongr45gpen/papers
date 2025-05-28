@@ -65,8 +65,8 @@
 
 \renewcommand\maketitle{\twocolumn[
   \begin{@twocolumnfalse}
-  \lhead{}\chead{\footnotesize \iac@conference th International Astronautical Congress, {\iac@location}.\\ \iac@makecopyright}\rhead{}%
-  \lfoot{IAC--\iac@paperyear--\iac@papernumber}\cfoot{}\rfoot{Page \thepage\ of \pageref{LastPage}}%
+  \lhead{}\chead{}\rhead{}%
+  \lfoot{}\cfoot{}\rfoot{Page \thepage\ of \pageref{LastPage}}%
   \begingroup
     \global\@topnum\z@   % Prevents figures from going at top of page.
     \@maketitle
@@ -85,8 +85,8 @@
   \newpage
   \begin{center}%
   	\vskip -1em
-    IAC--\iac@paperyear--\iac@papernumber\par%
-    \vskip1em
+    %IAC--\iac@paperyear--\iac@papernumber\par%
+    %\vskip1em
     {\large \textbf{{\@title}} \par}%
     \vskip 1em%
     {\large

@@ -5,7 +5,7 @@
 \usepackage[citestyle=numeric,bibstyle=numeric,maxbibnames=1,maxcitenames=1,sorting=none,sortcites]{biblatex}
 \usepackage[dvipsnames]{xcolor}
 \usepackage[inline]{enumitem}
-\usepackage{siunitx}
+\usepackage[binary-units]{siunitx}
 \usepackage[nameinlink]{cleveref}
 \usepackage{tabularx}
 \usepackage{acro}
@@ -17,7 +17,7 @@
 \makeglossaries
 \include{abbreviations}
 
-\sisetup{range-units = single,print-unity-mantissa=false}
+\sisetup{range-units = single,print-unity-mantissa}
 
 \setlength{\marginparwidth}{2cm}
 %\usepackage[colorinlistoftodos,disable,textsize=small]{todonotes}
@@ -99,20 +99,20 @@
 \begin{document}
 
 \lhead{}
-\chead{\footnotesize 73\textsuperscript{rd} International Astronautical Congress (IAC), Paris, France, 18-22 September 2022.\\ Copyright \copyright 2022 by Mr. Konstantinos Kanavouras. Published by the IAF, with permission and released to the IAF to publish in all forms.}
+\chead{}
 \rhead{}
 
 \makeatletter
-\lfoot{IAC--\iac@paperyear--\iac@papernumber}\cfoot{}\rfoot{Page \thepage\ of \pageref{LastPage}}%
+\lfoot{}\cfoot{}\rfoot{Page \thepage\ of \pageref{LastPage}}%
 \makeatother
 
-\IACpaperyear{22}
-\IACpapernumber{D1,IPB,15,x71812}
-\IACconference{73}
-\IAClocation{Paris, France, 18-22 September 2022}
-\IACcopyrightB{2022}{International Astronautical Federation (IAF)}
+%\IACpaperyear{22}
+%\IACpapernumber{D1,IPB,15,x71812}
+%\IACconference{73}
+%\IAClocation{Paris, France, 18-22 September 2022}
+%\IACcopyrightB{2022}{International Astronautical Federation (IAF)}
 
-\title{Agile-Systems Engineering for sub-CubeSat scale spacecraft}
+\title{Agile Systems Engineering for sub-CubeSat scale spacecraft}
 
 \IACauthor{Konstantinos~Kanavouras}{University of Luxembourg, \url{konstantinos.kanavouras@uni.lu}}
 \IACauthor{Andreas~M.~Hein}{University of Luxembourg, \url{andreas.hein@uni.lu}}
@@ -690,7 +690,6 @@ In this section, we will provide details on the Case Studies presented in \Cref{
 
  %\subsubsection{Project Description}
 
-%TODO: Put this somewhere
 The project began with understanding the needs and objectives of the AI-driven payload. Then, the software and hardware architecture were documented to satisfy the space mission objectives. While we initially used MBSE to model requirements during the development phase, there was not enough time to complete and utilise this formalisation. COTS components were chosen instead of space-grade products since they were easily available, less expensive and reduced software and hardware development time. Additionally, ready-to-use development platforms such as \href{https://www.edgeimpulse.com/}{Edge Impulse} were used to embed AI algorithms on the computer module to reduce development time. Finally, the functionalities of the payload were tested using a breadboard model to validate the proof of concept, before building the qualification and flight models. %This was undertaken during the flight model PCB board development. This system engineering approach is explained further in the following sections. 
 
 % \subsubsection{Systems Engineering}
@@ -865,10 +864,7 @@ For future work, we propose more research on how other agile frameworks tailored
 % - Somehow reduce risk (agile depends on capable engineers)
 
 %In the future, we expect systems engineering research to focus on identifying how an agile process can be automatically and systematically applied to the design of hardware as well, instead of just software. There is also ample ground to cover on the possibility of distributed and fractionated spacecraft, and how incremental deployment can gradually improve a system over time. Finally, considerations on the selection of which and how many designs can be launched at a time would offer valuable insights to achieve the highest possible mission return given financial constraints.
-%\vspace{3em}
 
-
-%\newpage
 
 \AtNextBibliography{\footnotesize}
 \printbibliography
